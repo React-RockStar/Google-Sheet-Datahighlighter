@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <base target="_top">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body{
+                margin: 100px 0px;
+                padding:0px;
+                text-align:left;
+                /* text-align:center; */
+                font-family: arial;
+            }
+            input[type=text], input[type=password]{
+                width:50%;
+                padding:7px 10px;
+                margin: 8px 0;
+                display:inline-block;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+            }
+            button{
+                background-color:#4CAF50;
+                width: 10%;
+                padding: 9px 5px;
+                margin:5px 0;
+                cursor:pointer;
+                border:none;
+                color:#ffffff;
+            }
+            button:hover{
+                opacity:0.8;
+            }
+            .dis-none {
+                display: none;
+            }
+            #un,#ps{
+                font-family:'Lato', sans-serif;
+                color: gray;
+            }
+            .display-connection{
+                display: none;
+            } 
+            .reset{
+                width:30%;
+                display:block;
+                margin:10px 0px;
+            }
+            .pulldata{
+                width:30%;
+                display:block;
+                margin:20px 0px;
+            }
+            .mt-3{
+                margin-top: 1rem !important;
+            }
+        </style>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <script src="https://trello.com/1/client.js?key=fad1c87c9cc4415a9162425d93432f44"></script>
+        <script src="https://trello.com/1/client-unminified.js"></script>
+        <script>
+            var api_key = "fad1c87c9cc4415a9162425d93432f44";
+            $( function() {
+                $( "#datepicker1" ).datepicker();
+                $( "#datepicker1" ).datepicker( "option", "dateFormat","yy-mm-dd");
+                $( "#datepicker2" ).datepicker();
+                $( "#datepicker2" ).datepicker( "option", "dateFormat","yy-mm-dd");
+                $( "#datepicker1_1" ).datepicker();
+                $( "#datepicker1_1" ).datepicker( "option", "dateFormat","yy-mm-dd");
+                $( "#datepicker2_1" ).datepicker();
+                $( "#datepicker2_1" ).datepicker( "option", "dateFormat","yy-mm-dd");
+            } );
+
+            var labels_All;
+
+            function onSuccess(retval) {
+                var list=retval[0];
+                labels_All=retval[1];
+                var div = document.getElementById('output');
+
+                var htmlstr = '';
+                for(var i=0;i<list.length;i++){
+                    htmlstr +='<input type="checkbox" class = "listname" value="'+list[i]+'"  checked/>'+list[i]+'<br/>';
+                }
+
+                htmlstr +='';
+                div.innerHTML=htmlstr;
+                $(".check_edit").removeAttr('disabled');
+                $(".check_edit").prop('checked', true);
+                var listname=$('.listname');
+
+                for(var i=0;i<listname.count;i++){
+                    listname.eq(i).removeAttr('disabled');
+                }
+
+                $(".start_sync").removeAttr('disabled');
+                $(".criteria").removeAttr('disabled');
+                
+                $(".add_btn").removeAttr('disabled');
+                $(".add_text").removeAttr('disabled');
+                $(".remove_btn").removeAttr('disabled');
+                $(".remove_text").removeAttr('disabled');
+                
+                htmlstr = '<select class="label">';
+                for(var i=0;i<labels_All.length;i++){
+                    htmlstr +='<option value="'+labels_All[i]+'">'+labels_All[i]+'</option>';
+                }
+                htmlstr +='</select>';
+                $(".label_div").eq(0).html(htmlstr);
+                $(".label_div").eq(1).html(htmlstr);
+                
+                htmlstr = "<select class='list-name'>";
+                for(var i=0;i<list.length;i++){
+                    htmlstr +='<option value="'+list[i]+'"  >'+list[i]+ '</option>';
+                }
+                htmlstr +='</select>';
+                $(".list_name_div").eq(0).html(htmlstr);
+                $(".list_name_div").eq(1).html(htmlstr);
+
+                htmlstr = '<select class="label_1">';
+                for(var i=0;i<labels_All.length;i++){
+                    htmlstr +='<option value="'+labels_All[i]+'">'+labels_All[i]+'</option>';
+                }
+                htmlstr +='</select>';
+                $(".label_div_1").eq(0).html(htmlstr);
+                $(".label_div_1").eq(1).html(htmlstr);
+            }
+            var memberlists;
+            function onMembers(list){
+                memberlists=list;
+                
+                var htmlstr = '<select class="person">';
+                for(var i=0;i<list.length;i++){
+                    htmlstr +='<option value="'+list[i].fullName+'">'+list[i].fullName+'</option>';
+                }
+
+                htmlstr +='</select>';
+                $(".person_div").eq(0).html(htmlstr);
+                $(".person_div").eq(1).html(htmlstr);
+            }
+            function sleepFor( sleepDuration ){
+                var now = new Date().getTime();
+                while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
+            }
+            
+            var flag_connect = false;
+            var f_visible = true
+            
+            function connect_fun(){
+                reset();
+                
+                flag_connect = !flag_connect;
+                var api_token = Trello.token();
+                var key_and_token = "key=" + api_key + "&token=" + api_token;
+                console.log(key_and_token);
+                if (flag_connect == true) {
+                    $(".conect_btn").text( 'Disconnect' )
+                    $(".b_sharp").attr("disabled", "true")
+                    var connect_result = google.script.run.withSuccessHandler(onSuccess).main($(".b_sharp").find(':selected').text(), key_and_token);
+                } else {
+                    $(".conect_btn").text( 'Connect' )
+                    $(".b_sharp").removeAttr("disabled");
+                    reset()
+                }
+            
+//              $(".conect_btn").prop('disabled', true);
+//              sleepFor(5000);
+            
+//              google.script.run.withSuccessHandler(onSuccess).main();
+            
+            }
+
+            function change_text(){
+                var card_lists=$(".card_lists").val();
+                var select_cell=$(".select_cell").val();
+                if(card_lists.trim()==""){
+                    $(".start_sync").prop('disabled', true);
+                } else {
+                    $(".start_sync").removeAttr('disabled');
+                }
+            
+            }
+            function editable(){
+                if($(".check_edit").prop('checked')) {
+
+                    $(".check_edit").prop('disabled', true);
+                    $(".check_edit").prop('checked', true);
+                    var listname=$('.listname');
+                    
+                    for(var i=0;i<listname.count;i++){
+                        listname.eq(i).removeAttr('disabled');
+                    }
+
+                    $(".criteria").removeAttr('disabled');
+                    $(".add_btn").removeAttr('disabled');
+                    $(".add_text").removeAttr('disabled');
+                    $(".remove_btn").removeAttr('disabled');
+                    $(".remove_text").removeAttr('disabled');
+
+                } else {
+
+                    $(".check_edit").prop('disabled', true);
+                    $(".check_edit").prop('checked', false);
+                    var listname=$('.listname');
+                    for(var i=0;i<listname.count;i++) {
+                        listname.eq(i).prop('disabled', true);
+                    }
+
+                    $(".start_sync").prop('disabled', true);
+                    $(".criteria").prop('disabled', true);
+                    $(".add_btn").prop('disabled', true);
+                    $(".add_text").prop('disabled', true);
+                    $(".remove_btn").prop('disabled', true);
+                    $(".remove_text").prop('disabled', true);
+
+                }
+            }
+
+            ///////////setinterval/////////////
+            var myVar;// = setInterval(setColor, 300);
+            var fsync=true;
+
+            function sync() {
+                var api_token = Trello.token();
+                var key_and_token = "key=" + api_key + "&token=" + api_token;
+                $(".check_edit").prop('checked', false);
+                editable();
+//                $(".start_sync").prop('disabled', true);
+                var link_cell=$("input");
+
+                for(var i=0;i<link_cell.length;i++)
+//                    link_cell.eq(i).prop('disabled', true);
+                var listname=$(".listname");
+                
+                var searchtxt='';
+                for(var i=0;i<listname.length;i++){
+                    if(listname.eq(i).prop("checked"))
+                    searchtxt+=listname.eq(i).val()+',';
+                }
+                //  google.script.run.register();
+                google.script.run.sync_main(searchtxt,conditionarray_1, $(".b_sharp").find(':selected').text(), key_and_token);
+                //  google.script.run.Time_call(searchtxt);
+                clearInterval(myVar);
+                myVar=setInterval(script_call,3000);
+            }
+
+            function reset() {
+
+                $(".check_edit").prop('checked',true);
+                editable()
+                //google.script.run.unregister();
+                fsync = true;
+                clearInterval(myVar);
+                var link_cell=$("input");
+                for(var i=0;i<link_cell.length;i++)
+                    link_cell.eq(i).removeAttr('disabled');
+                //$(".start_sync").removeAttr('disabled');
+                $(".conect_btn").removeAttr('disabled');
+            }
+
+            function script_call(){
+                var listname=$(".listname");
+                var api_token = Trello.token();
+                var key_and_token = "key=" + api_key + "&token=" + api_token;
+                var searchtxt='';
+                for(var i=0;i<listname.length;i++){
+                    if(listname.eq(i).prop("checked"))
+                    searchtxt+=listname.eq(i).val()+',';
+                }
+                google.script.run.Time_call(searchtxt, key_and_token);
+            }
+            
+            function script_calla(){
+                var api_token = Trello.token();
+                var key_and_token = "key=" + api_key + "&token=" + api_token;
+                google.script.run.apply(conditionarray, key_and_token);
+            }
+            
+            var flag_activate = true;
+            var n_intervals = [];
+            
+            $(".disable_highlighting").removeAttr("disabled");
+            function apply(){
+                var api_token = Trello.token();
+                var key_and_token = "key=" + api_key + "&token=" + api_token;
+                
+                if ( flag_activate == true ) {
+                
+                    fsync = false;
+                    flag_activate = false;
+                    
+                    $(".applybtn").val("De-Activate Data Sync")
+                    
+                    $(".applybtn").prop('disabled', true);
+                    reset();
+
+                    google.script.run.apply(conditionarray, key_and_token);
+                    
+                    clearInterval(myVar);
+//                    myVar = setInterval(script_calla,10000);
+                    n_intervals.push( setInterval(script_calla,10000) );
+                    
+                    $(".disable_highlighting").attr("disabled", "true");
+
+                    console.log("myVar2: " + myVar)
+                    
+                    
+                } else {
+
+//                    reset()
+                    
+                    fsync = true;
+                    flag_activate = true;
+                    
+                    console.log("n_intervals: " + n_intervals);
+                    
+                    n_intervals.forEach(clearInterval);
+                    
+                    n_intervals = [];
+                    
+                    sleepFor(5000);
+                    
+                    $(".disable_highlighting").removeAttr("disabled");
+                    
+//                    google.script.run.test_clear_formatting();
+
+                    $(".applybtn").val("Activate Data Highlighting");
+                    
+                }
+            }
+            
+            function de_apply() {
+                 
+                 google.script.run.test_clear_formatting();
+                 
+            }
+            
+             // Obtain the token
+            // Obtain the token
+            var authenticationSuccess = function () {
+              var token = Trello.token();
+            };
+            
+            var authenticationFailure = function () {
+              alert("Failed authentication");
+            };
+
+            // Force deauthorize
+            
+            function connectTrello(){
+              // Force deauthorize
+              Trello.deauthorize();
+              Trello.authorize({
+                name: "Preauthorize a Shared Service Account",
+                scope: {
+                  read: true,
+                  write: true
+                },
+                type: "popup",
+                expiration: "never",
+                persist: false,
+                success: authenticationSuccess,
+                error: authenticationFailure
+              }); 
+            }
+        </script>
+        <base target="_top">
+    </head>
+    <body bgcolor="#E6E6FA">
+        <div id="container">
+            <h2>Data Highlighter for Trello</h2>
+            <label for="uname" id="un">License Key:</label>
+            <input type="text" name="user" placeholder="Enter Key" id="license_key" ><br/><br/>
+            <!--label for="upass" id="ps">Password:</label>
+            <input type="password" name="pass" placeholder="Enter Password" id="upass"><br/><br/-->
+            <button type="submit" value="Enter Key"  id="submit" onClick="enterkey()" style="width: fit-content;margin-bottom:10px;">Enter Key Here</button><br/>
+            <button id="connectLink" onClick="connectTrello()" style="width: fit-content">Allow Trello</button><br/>
+            <!--button type="submit" value="Register"  id="submit" onClick="alert('Login Successfully')">Register</button-->
+            <br/><br/>
+            <label>Connection</label>
+            <input type="button" class="collapse-btn" id="connect_board"  value="->">
+            <div class="display-connection"> 
+                <label for="upass" id="ps">Board #:</label>
+                <!-- <input type="text" name="b_sharp" class="b_sharp mt-3" placeholder="5ecd07936438844a8863105a" id="upass"><br/><br/> -->
+
+                <select class="b_sharp mt-3">
+                    <option value="0">5ecd07936438844a8863105a</option>
+                </select>
+                <br>
+                <label id="connect">Trello Board:</label>
+                <button type="submit" value="trello_connect" class="conect_btn"  onClick="connect_fun();" >Connect</button>
+                <!--input type="checkbox" value="trello_connect" class="check_btn"  id="submit" onClick="" /-->
+                <br/>
+                <label for="upass" id="ps">Linked Cell Range:</label>
+                <!--button type="submit" value="select_cell" class=""  id="submit" style="width:50%" onClick="connect_fun();" >Select Cell Range</button>
+                <br/>
+                
+                <input type="text" class="select_cell" placeholder="" id="upass" style='width:80%' onchange="change_text()" ><br/><br/-->
+                <label for="upass" id="ps">Filter:</label><br/>
+                <label for="upass" id="ps">Card List(s):</label>
+                <input type="checkbox" value="edit" class="check_edit"  id="submit"  disabled/>
+                <label for="upass" id="ps">Edit:</label>
+                <!--input type="text" id="link_cell" class="card_lists" placeholder="" onchange="change_text()" -->
+                <div id="output"></div>
+                <br/><br/>
+                <label for="upass" id="ps">Criteria:</label>
+                <!--              -->
+                <!-- <p>Filter Field</p> -->
+                <br>
+                
+                <input type="checkbox" name="enable_filter" id="enable_filter" >
+                <label for="enable_filter">Filter Field</label>
+                <br><br>
+
+                <!-- <div id="filter-box" class="visible-filter dis-none"> -->
+    
+                    <select class="fieldoption_1">
+                        <option value="0">Due Date</option>
+                        <option value="1">Label</option>
+                        <!-- <option value="2">Last Person Connected</option>
+                        <option value="3">Assignee</option>
+                        <option value="4">Text Content</option>
+                        <option value="5">Last Time</option> -->
+                    </select>
+                    <select class="operatoroption_1">
+                        <option value="0">=</option>
+                        <option value="1">></option>
+                        <option value="2"><</option>
+                        <option value="3">>=</option>
+                        <option value="4"><=</option>
+                    </select>
+
+                    <input type="text"  id="datepicker1_1" value="">
+                    <input type="text" class="valuetxt_1"  value="">
+                    <div class="person_div_1">
+                    </div>
+                    <div class="label_div_1">
+                    </div>
+                    <select class="andor_1">
+                        <option value="0"></option>
+                        <option value="1">And</option>
+                        <option value="2">Or</option>
+                    </select>
+                    <div class="andordis_1" style="display: none;">
+                    <select class="fieldoption_1">
+                        <option value="0">Due Date</option>
+                        <option value="1">Label</option>
+                    </select>
+                    <select class="operatoroption_1">
+                        <option value="0">=</option>
+                        <option value="1">></option>
+                        <option value="2"><</option>
+                        <option value="3">>=</option>
+                        <option value="4"><=</option>
+                    </select>
+                    <input type="text" id="datepicker2_1" value="">
+                        <input type="text" class="valuetxt_1" value="">
+                        <div class="person_div_1">
+                        </div>
+                        <div class="label_div_1">
+                        </div>
+                    </div>
+    
+    
+    
+                    <input type="button" class="insertbtn_1" value="Add">
+                    <div class="conditiontable_1">
+                    </div>
+    
+            
+                    <button type="submit"  class=""  id="submit" style="width:30%" onClick="sync();" >Filter</button>
+                 <!--  </div> -->
+            </div>
+            <br/><br/>
+
+            <!--iframe src="https://www.freelancer.com/projects/google-sheets/Google-Sheets-Button-Script-make/reviews"/-->
+            <!-- Note:-use "&amp;nbsp"(use in html) or "margin"(left/right in css in head tag) to adjust the space) -->
+            <!--a href="register.html">New Member</a-->
+        </div>
+        <!--p>Clear Entries before</p>
+        <p><input type="text" id="datepicker"></p>
+        <p><input type="submit" value="Clear Old" onClick="google.script.run.ClearOld(document.getElementById(datepicker).value)" /></p>
+        <p><input type="button" value="Close Sidebar" onClick="google.script.host.close()" /></p-->
+        <label>Highlight Data</label>
+        <input type="button" class="downbtn" id="activate_highlight" value="->">
+        <div class = "display" style="display: none;">
+            <p>Display Field</p>
+            <p> If 
+            <select class="fieldoption">
+                <option value="0">Due Date</option>
+                <option value="1">Label</option>
+                <option value="2">Last Person Connected</option>
+                <option value="3">Assignee</option>
+                <option value="4">Text Content</option>
+                <option value="5">Last Time</option>
+                <option value="6">List Name</option>
+            </select>
+            <select class="operatoroption">
+                <option value="0">=</option>
+                <option value="1">></option>
+                <option value="2"><</option>
+                <option value="3">>=</option>
+                <option value="4"><=</option>
+            </select>
+            <input type="text"  id="datepicker1" value="">
+            <input type="text" class="valuetxt"  value="">
+            <div class="person_div">
+            </div>
+            <div class="label_div">
+            </div>
+            <div class="list_name_div">
+            </div>
+            <select class="andor">
+            <option value="0"></option>
+            <option value="1">And</option>
+            <option value="2">Or</option>
+            </select>
+            <div class="andordis" style="display: none;">
+            <select class="fieldoption">
+                <option value="0">Due Date</option>
+                <option value="1">Label</option>
+                <option value="2">Last Person Connected</option>
+                <option value="3">Assignee</option>
+                <option value="4">Text Content</option>
+                <option value="5">Last Time</option>
+                <option value="6">List Name</option>
+
+            </select>
+            <select class="operatoroption">
+                <option value="0">=</option>
+                <option value="1">></option>
+                <option value="2"><</option>
+                <option value="3">>=</option>
+                <option value="4"><=</option>
+            </select>
+            <input type="text" id="datepicker2" value="">
+                <input type="text" class="valuetxt" value="">
+                <div class="person_div">
+                </div>
+                <div class="label_div">
+                </div>
+                <div class="list_name_div">
+                </div>
+            </div>
+            <p>
+                <label>Cell Color</label>
+                <select class="backcolor" >
+                    <option value="black">white</option>
+                    <option value="black">black</option>
+                    <option value="coral">coral</option>
+                    <option value="blue">blue</option>
+                    <option value="red">red</option>
+                    <option value="blueviolet">blueviolet</option>
+                    <option value="azure">azure</option>
+                    <option value="aqua">aqua</option>
+                    <option value="salmon">salmon</option>
+                    <option value="purple">purple</option>
+                    <option value="peru">peru</option>
+                </select>
+                <br>
+                <label>Cell Text Color</label>
+                <select class="textcolor" >
+                    <option value="black">black</option>
+                    <option value="black">white</option>
+                    <option value="coral">coral</option>
+                    <option value="blue">blue</option>
+                    <option value="red">red</option>
+                    <option value="blueviolet">blueviolet</option>
+                    <option value="azure">azure</option>
+                    <option value="aqua">aqua</option>
+                    <option value="salmon">salmon</option>
+                    <option value="purple">purple</option>
+                    <option value="peru">peru</option>
+                </select>
+                <br>
+                <label>Cell Border Color</label>
+                <select class="bordercolor" >
+                    <option value="black">black</option>
+                    <option value="black">white</option>
+                    <option value="coral">coral</option>
+                    <option value="blue">blue</option>
+                    <option value="red">red</option>
+                    <option value="blueviolet">blueviolet</option>
+                    <option value="azure">azure</option>
+                    <option value="aqua">aqua</option>
+                    <option value="salmon">salmon</option>
+                    <option value="purple">purple</option>
+                    <option value="peru">peru</option>
+                </select>
+                <div class="colordis" style="    width: 20px;
+                    height: 20px;
+                    background-color: white;
+                    border-color: black;
+                    color: black;
+                    border-style: solid;">
+                A
+                </div>
+            </p>
+
+            <input type="button" class="insertbtn" value="Add">
+            <div class="conditiontable">
+            </div>
+            <input type="button" class="applybtn" value="Activate Data Highlighting" onClick="apply()">
+            <input type="button" class="disable_highlighting" value="De-activate Data Highlighting" onClick="de_apply()" >
+        </div>
+        
+            <script type="text/javascript">
+            
+                var l_trello_board;
+                var b_visible = false;
+                
+                $("#connect_board").attr("disabled", "true");
+                $("#activate_highlight").attr("disabled", "true");
+            
+                function enterkey() {
+                    
+                    var license_key = $("#license_key").val();
+                    
+                    if (license_key) {
+                    
+                        $.ajax({
+                            url: 'https://datahighlighter.com/api/getTrelloBoard/' + license_key, 
+                            type: 'get',
+                            data:{
+                            
+                            }
+                        }).done(response => {
+                            console.log('response: ' + response);
+                            b_visible = true;
+                            if (b_visible) {
+                                $("#connect_board").removeAttr("disabled");
+                                $("#activate_highlight").removeAttr("disabled");
+                                
+                                l_trello_board = response.split(",")
+                                
+                                console.log("l_trello_board: " + l_trello_board.length)
+                                
+                                $(".b_sharp").empty();
+                                
+                                for (var i = 0; i < l_trello_board.length; i ++) {
+                                    $(".b_sharp").append($('<option>').val(i).text(l_trello_board[i]))
+                                }
+                                
+                            }
+                        }).fail(() => {
+                            alert("Please insert Valid License Key")
+                            if (b_visible) {
+                                b_visible = false;
+                            }
+                        })
+                    } else {
+                        alert("Please insert License Key")
+                    }
+
+                    
+//                    google.script.run.getTrelloBoard(license_key);
+
+                }
+                
+            
+                $(".person_div_1").eq(0).hide();
+                $(".person_div_1").eq(1).hide();
+                $(".person_div_2").eq(0).hide();
+                $(".person_div_2").eq(1).hide();
+                $(".valuetxt_1").hide();
+                $(".fieldoption_1").change(function(){
+                    var newOptions = {"0": "=",
+                        "1": ">",
+                        "2": "<",
+                        "3": ">=",
+                        "4": "<=",
+                    };
+                
+                    if($(".fieldoption_1 :selected").eq(0).text()=="Due Date" || $(".fieldoption_1 :selected").eq(0).text()=="Last Time"){
+                        $(".valuetxt_1").eq(0).hide();
+                        $("#datepicker1_1").show();
+                        $(".person_div_1").eq(0).hide();
+                        $(".label_div_1").eq(0).hide();
+                    }else if($(".fieldoption_1 :selected").eq(0).text()=="Label"){
+                        $(".valuetxt_1").eq(0).hide();
+                        $("#datepicker1_1").hide();
+                        $(".person_div_1").eq(0).hide();
+                        $(".label_div_1").eq(0).show();
+                    }else{
+                        $(".valuetxt_1").eq(0).show();
+                        $("#datepicker1_1").hide();
+                        $(".person_div_1").eq(0).hide();
+                        $(".label_div_1").eq(0).hide();
+                    }
+                    if($(".fieldoption_1 :selected").eq(1).text()=="Due Date" || $(".fieldoption_1 :selected").eq(1).text()=="Last Time"){
+                        $(".valuetxt_1").eq(1).hide();
+                        $("#datepicker2_1").show();
+                        $(".person_div_1").eq(1).hide();
+                        $(".label_div_1").eq(1).hide();
+                    }else if($(".fieldoption_1 :selected").eq(1).text()=="Label"){
+                        $(".valuetxt_1").eq(1).hide();
+                        $("#datepicker2_1").hide();
+                        $(".person_div_1").eq(1).hide();
+                        $(".label_div_1").eq(1).show();
+                    }else{
+                        $(".valuetxt_1").eq(1).show();
+                        $("#datepicker2_1").hide();
+                        $(".person_div_1").eq(1).hide();
+                        $(".label_div_1").eq(1).hide();
+                    }
+
+                
+                });  
+        
+                $("#datepicker1_1").change(function(){
+                    $(".valuetxt_1").eq(0).val($("#datepicker1_1").val());
+                });
+                $("#datepicker2_1").change(function(){
+                    $(".valuetxt_1").eq(1).val($("#datepicker2_1").val());
+                });
+    
+                $(".andor_1").change(function(){
+                    if($(".andor_1").val()!="0"){
+                    $(".andordis_1").show();
+                    }else{
+                    $(".andordis_1").hide();
+                    }
+                });
+
+                var conditionarray_1=[];
+                var operate_lbl_1=["=",">","<",">=","<="];
+                
+                $( ".insertbtn_1" ).click(function() {
+
+                    $(".applybtn_1").removeAttr('disabled');
+                    if($(".fieldoption_1 :selected").eq(0).text()=="Label"){
+                    
+                        $(".valuetxt_1").eq(0).val($(".label_1 :selected").eq(0).val());
+                    
+                    }
+                    if($(".fieldoption_1 :selected").eq(1).text()=="Label"){
+                    
+                        $(".valuetxt_1").eq(1).val($(".label_1 :selected").eq(1).val());
+                    
+                    }
+
+                    var tmparr={
+                        "andor":$(".andor_1 :selected").eq(0).text(),
+                        "fieldoption":[$(".fieldoption_1 :selected").eq(0).text(),$(".fieldoption_1 :selected").eq(1).text()],
+                        "operatoroption":[$(".operatoroption_1 :selected").eq(0).val(),$(".operatoroption_1 :selected").eq(1).val()],
+                        "valuetxt":[$(".valuetxt_1").eq(0).val(),$(".valuetxt_1").eq(1).val()],
+                    };
+
+                    conditionarray_1.push(tmparr);
+                    var htmlvalue="";
+                    for (var i=0 ;i<conditionarray_1.length;i++) {
+                        htmlvalue+="<p>";
+                        htmlvalue+=conditionarray_1[i]["fieldoption"][0];
+                        htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][0])]+conditionarray_1[i]["valuetxt"][0];
+                        if(conditionarray_1[i]["andor"]!=""){
+                            htmlvalue+="&nbsp;"+conditionarray_1[i]["andor"];
+                            htmlvalue+="&nbsp;"+conditionarray_1[i]["fieldoption"][1];
+                            htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][1])]+conditionarray_1[i]["valuetxt"][1]+"&nbsp;";
+                        }
+                        htmlvalue+="<input type='button' class='delitem_1' value='Delete' onClick='del_func_1("+i.toString()+")'></p>";
+                    }
+
+                    $(".conditiontable_1").html(htmlvalue);
+
+                });
+
+                function del_func_1(i){
+                    
+                    $(".applybtn_1").removeAttr('disabled');
+                    conditionarray_1.splice(i, 1);
+                        var htmlvalue="";
+                    for (var i=0 ;i<conditionarray_1.length;i++){
+                        htmlvalue+="<p>";
+                        htmlvalue+=conditionarray_1[i]["fieldoption"][0];
+                        htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][0])]+conditionarray_1[i]["valuetxt"][0];
+                        if(conditionarray_1[i]["andor"]!=""){
+                            htmlvalue+="&nbsp;"+conditionarray_1[i]["andor"];
+                            htmlvalue+="&nbsp;"+conditionarray_1[i]["fieldoption"][1];
+                            htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][1])]+conditionarray_1[i]["valuetxt"][1]+"&nbsp;";
+                        }
+                        htmlvalue+="<input type='button' class='delitem_1' value='Delete' onClick='del_func_1("+i.toString()+")'></p>";
+
+                    }
+                    $(".conditiontable_1").html(htmlvalue);
+                }
+
+            </script>
+        <button class="pulldata">Pull New Data</button>
+        <button type="submit" class="reset"  id="submit" onClick="reset();" >Reset</button>
+        <script type="text/javascript">
+            function ontemp(){
+            }
+
+            $( ".pulldata" ).click(function() {
+                var searchtxt='';
+                var api_token = Trello.token();
+                var key_and_token = "key=" + api_key + "&token=" + api_token;
+                var listname=$('.listname');
+                for(var i=0;i<listname.length;i++){
+                if(listname.eq(i).prop("checked"))
+                    searchtxt+=listname.eq(i).val()+',';
+                }
+                google.script.run.withSuccessHandler(ontemp).pull(searchtxt, key_and_token);
+            });
+
+            $("#enable_filter").click( function() {
+                if ( this.checked ) {
+                    $(".visible-filter").toggleClass('dis-none')
+                } else {
+                    $(".visible-filter").toggleClass('dis-none')
+                }
+            } )
+
+            $(".person_div").eq(0).hide();
+            $(".person_div").eq(1).hide();
+            $(".label_div").eq(0).hide();
+            $(".label_div").eq(1).hide();
+            $(".list_name_div").eq(0).hide();
+            $(".list_name_div").eq(1).hide();
+            $(".valuetxt").hide();
+
+            var dis_flag=true;
+            $( ".downbtn" ).click(function() {
+                google.script.run.withSuccessHandler(onMembers).getMembers();
+                if(dis_flag){
+                    dis_flag=false;
+                    $(".display").show();
+                }
+                else{
+                    dis_flag=true;
+                    $(".display").hide();
+                }
+            });
+            
+            var dis_connection_flag=true;
+            $( ".collapse-btn" ).click(function() {
+                google.script.run.withSuccessHandler(onMembers).getMembers();
+                if(dis_connection_flag){
+                    dis_connection_flag=false;
+                    $(".display-connection").show();
+                }
+                else{
+                    dis_connection_flag=true;
+                    $(".display-connection").hide();
+                }
+            }); 
+                
+            $(".fieldoption").change(function(){
+                var newOptions = {"0": "=",
+                "1": ">",
+                "2": "<",
+                "3": ">=",
+                "4": "<=",
+            };
+
+            var newOptions1 = {"0": "Exact Match",
+                "1": "Contain",
+            };
+
+            var $el = $(".operatoroption").eq(0);
+            $el.empty(); // remove old options
+            // $('.operatoroption option:gt(0)').eq(0).remove();
+            $.each(newOptions, function(key,value) {
+                $el.append($("<option></option>")
+                .attr("value", key).text(value));
+            });
+
+            $el = $(".operatoroption").eq(1);
+            $el.empty(); // remove old options
+            // $('.operatoroption option:gt(0)').eq(1).remove();
+            $.each(newOptions, function(key,value) {
+                $el.append($("<option></option>")
+                .attr("value", key).text(value));
+            });
+
+            if($(".fieldoption :selected").eq(0).text()=="Due Date" || $(".fieldoption :selected").eq(0).text()=="Last Time"){
+                $(".valuetxt").eq(0).hide();
+                $("#datepicker1").show();
+                $(".person_div").eq(0).hide();
+                $(".label_div").eq(0).hide();
+                $(".list_name_div").eq(0).hide();
+            }else if($(".fieldoption :selected").eq(0).text()=="Last Person Connected" || $(".fieldoption :selected").eq(0).text()=="Assignee"){
+                $(".valuetxt").eq(0).hide();
+                $("#datepicker1").hide();
+                $(".person_div").eq(0).show();
+                $(".label_div").eq(0).hide();
+                $(".list_name_div").eq(0).hide();
+
+            }else if($(".fieldoption :selected").eq(0).text()=="Label" || $(".fieldoption :selected").eq(0).text()=="Label"){
+                $(".valuetxt").eq(0).hide();
+                $("#datepicker1").hide();
+                $(".person_div").eq(0).hide();
+                $(".label_div").eq(0).show();
+                $(".list_name_div").eq(0).hide();
+
+            }else if($(".fieldoption :selected").eq(0).text()=="List Name"){
+                $(".valuetxt").eq(0).hide();
+                $("#datepicker1").hide();
+                $(".person_div").eq(0).hide();
+                $(".label_div").eq(0).hide();
+                $(".list_name_div").eq(0).show();
+
+            }else if($(".fieldoption :selected").eq(0).text()=="Text Content"){
+                $(".valuetxt").eq(0).show();
+                $("#datepicker1").hide();
+                $(".person_div").eq(0).hide();
+                $(".label_div").eq(0).hide();
+                $(".list_name_div").eq(0).hide();
+
+                var $el = $(".operatoroption").eq(0);
+                $el.empty(); // remove old options
+                //  $('.operatoroption option:gt(0)').eq(0).remove();
+                $.each(newOptions1, function(key,value) {
+                    $el.append($("<option></option>").attr("value", key).text(value));
+                });
+                
+            }else{
+                $(".valuetxt").eq(0).show();
+                $("#datepicker1").hide();
+                $(".person_div").eq(0).hide();
+                $(".label_div").eq(0).hide();
+            }
+            if($(".fieldoption :selected").eq(1).text()=="Due Date" || $(".fieldoption :selected").eq(1).text()=="Last Time"){
+                $(".valuetxt").eq(1).hide();
+                $("#datepicker2").show();
+                $(".person_div").eq(1).hide();
+                $(".label_div").eq(1).hide();
+                $(".list_name_div").eq(1).hide();
+            }else if($(".fieldoption :selected").eq(1).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(1).text()=="Assignee"){
+                $(".valuetxt").eq(1).hide();
+                $("#datepicker2").hide();
+                $(".person_div").eq(1).show();
+                $(".label_div").eq(1).hide();
+                $(".list_name_div").eq(1).hide();
+            }else if($(".fieldoption :selected").eq(1).text()=="Label" || $(".fieldoption :selected").eq(1).text()=="Label"){
+                $(".valuetxt").eq(1).hide();
+                $("#datepicker2").hide();
+                $(".person_div").eq(1).hide();
+                $(".label_div").eq(1).show();
+                $(".list_name_div").eq(1).hide();
+
+            }else if($(".fieldoption :selected").eq(1).text()=="ListName"){
+                $(".valuetxt").eq(1).hide();
+                $("#datepicker2").hide();
+                $(".person_div").eq(1).hide();
+                $(".label_div").eq(1).hide();
+                $(".list_name_div").eq(1).show();
+
+            }else if($(".fieldoption :selected").eq(1).text()=="Text Content"){
+                $(".valuetxt").eq(1).show();
+                $("#datepicker2").hide();
+                $(".person_div").eq(1).hide();
+                $(".label_div").eq(1).hide();
+                $(".list_name_div").eq(1).hide();
+
+                var $el = $(".operatoroption").eq(1);
+                $el.empty(); // remove old options
+            //    $('.operatoroption option:gt(0)').eq(1).remove();
+                $.each(newOptions1, function(key,value) {
+                $el.append($("<option></option>")
+                .attr("value", key).text(value));
+                });
+            }else{
+                $(".valuetxt").eq(1).show();
+                $("#datepicker2").hide();
+                $(".person_div").eq(1).hide();
+                $(".label_div").eq(1).hide();
+            }
+
+            
+        });
+
+        $("#datepicker1").change(function(){
+            $(".valuetxt").eq(0).val($("#datepicker1").val());
+        });
+        $("#datepicker2").change(function(){
+            $(".valuetxt").eq(1).val($("#datepicker2").val());
+        });
+            
+        $(".andor").change(function(){
+            if($(".andor").val()!="0"){
+            $(".andordis").show();
+            }else{
+            $(".andordis").hide();
+            }
+        });
+
+        $(".backcolor").change(function(){
+            $('.colordis').css('background-color', $('.backcolor').val());
+        });
+
+        $(".b_sharp").change(function(){
+
+           var board_text = $(this).find(':selected').text()
+
+            google.script.run.update_board_id( board_text );
+        });
+
+        $(".textcolor").change(function(){
+            $('.colordis').css('color', $('.textcolor').val());
+        });
+
+        $(".bordercolor").change(function(){
+            $('.colordis').css('border-color', $('.bordercolor').val());
+        });
+
+        var conditionarray=[];
+        var operate_lbl=["=",">","<",">=","<="];
+        var operate_lbl_c=["Contain","Exact Match"];
+
+        $( ".insertbtn" ).click(function() {
+            $(".applybtn").removeAttr('disabled');
+            if($(".fieldoption :selected").eq(0).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(0).text()=="Assignee"){
+            
+            $(".valuetxt").eq(0).val($(".person :selected").eq(0).val());
+            
+            }
+
+            if($(".fieldoption :selected").eq(1).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(1).text()=="Assignee"){
+            
+            $(".valuetxt").eq(1).val($(".person :selected").eq(1).val());
+            
+            }
+
+            if($(".fieldoption :selected").eq(0).text()=="Label"){
+            
+            $(".valuetxt").eq(0).val($(".label :selected").eq(0).val());
+            
+            }
+            if($(".fieldoption :selected").eq(1).text()=="Label"){
+            
+            $(".valuetxt").eq(1).val($(".label :selected").eq(1).val());
+            
+            }
+            
+
+            if($(".fieldoption :selected").eq(0).text()=="List Name"){
+            
+            $(".valuetxt").eq(0).val($(".list-name :selected").eq(0).val());
+            
+            }
+            if($(".fieldoption :selected").eq(1).text()=="List Name"){
+            
+            $(".valuetxt").eq(1).val($(".list-name :selected").eq(1).val());
+            
+            }
+
+
+            var tmparr={
+                "backcolor":$('.backcolor').val(),
+                "bordercolor":$('.bordercolor').val(),
+                "textcolor":$('.textcolor').val(),
+                "andor":$(".andor :selected").eq(0).text(),
+                "fieldoption":[$(".fieldoption :selected").eq(0).text(),$(".fieldoption :selected").eq(1).text()],
+                "operatoroption":[$(".operatoroption :selected").eq(0).val(),$(".operatoroption :selected").eq(1).val()],
+                "valuetxt":[$(".valuetxt").eq(0).val(),$(".valuetxt").eq(1).val()],
+            };
+
+            conditionarray.push(tmparr);
+            var htmlvalue="";
+            for (var i=0 ;i<conditionarray.length;i++){
+                htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+conditionarray[i]["backcolor"]+";color: "+conditionarray[i]["textcolor"]+";border-color: "+conditionarray[i]["bordercolor"]+"'>"+(i+1).toString()+"</div>";
+                htmlvalue+=conditionarray[i]["fieldoption"][0];
+                    if(conditionarray[i]["fieldoption"][0]=="Text Content")
+                        htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
+                    else
+                        htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
+                if(conditionarray[i]["andor"]!=""){
+                    htmlvalue+="&nbsp;"+conditionarray[i]["andor"];
+                    htmlvalue+="&nbsp;"+conditionarray[i]["fieldoption"][1];
+                        if(conditionarray[i]["fieldoption"][0]=="Text Content")
+                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                        else
+                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                }
+                htmlvalue+="<input type='button' class='delitem' value='Delete' onClick='del_func("+i.toString()+")'></p>";
+            }
+            console.log(conditionarray);
+            if(conditionarray.length > 1){
+                condition_flag = false;
+                for (var i=0 ;i<conditionarray.length;i++){
+                    for (var j=i+1 ;j<conditionarray.length;j++){
+                        if(conditionarray[i]["fieldoption"][0] === conditionarray[j]["fieldoption"][0]) {
+                            if(conditionarray[i]["valuetxt"][0] === conditionarray[j]["valuetxt"][0]) {
+                                condition_flag = true;
+                                break;
+                            }
+                        }
+                        if(conditionarray[j]["andor"] !=""){
+                            if(conditionarray[i]["fieldoption"][0] === conditionarray[j]["fieldoption"][1]) {
+                                if(conditionarray[i]["valuetxt"][0] === conditionarray[j]["valuetxt"][1]) {
+                                    condition_flag = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if(conditionarray[i]["andor"] !=""){
+                            if(conditionarray[i]["fieldoption"][1] === conditionarray[j]["fieldoption"][0]) {
+                                if(conditionarray[i]["valuetxt"][1] === conditionarray[j]["valuetxt"][0]) {
+                                    condition_flag = true;
+                                    break;
+                                }
+                            }
+                            if(conditionarray[j]["andor"] !=""){
+                                if(conditionarray[i]["fieldoption"][1] === conditionarray[j]["fieldoption"][1]) {
+                                    if(conditionarray[i]["valuetxt"][1] === conditionarray[j]["valuetxt"][1]) {
+                                        condition_flag = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(condition_flag){
+                        alert("Highlight Criteria Added - However, there may be conflict with a previous rule, remove rule as necessary.");
+                        break;
+                    }   
+                }
+            }
+            $(".conditiontable").html(htmlvalue);
+            
+        });
+        function del_func(i){
+            $(".applybtn").removeAttr('disabled');
+            conditionarray.splice(i, 1);
+                var htmlvalue="";
+            for (var i=0 ;i<conditionarray.length;i++){
+                htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+conditionarray[i]["backcolor"]+";color: "+conditionarray[i]["textcolor"]+";border-color: "+conditionarray[i]["bordercolor"]+"'>"+(i+1).toString()+"</div>";
+                htmlvalue+=conditionarray[i]["fieldoption"][0];
+                    if(conditionarray[i]["fieldoption"][0]=="Text Content")
+                        htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
+                    else
+                        htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
+                if(conditionarray[i]["andor"]!=""){
+                    htmlvalue+="&nbsp;"+conditionarray[i]["andor"];
+                    htmlvalue+="&nbsp;"+conditionarray[i]["fieldoption"][1];
+                        if(conditionarray[i]["fieldoption"][0]=="Text Content")
+                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                        else
+                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                }
+                htmlvalue+="<input type='button' class='delitem' value='Delete' onClick='del_func("+i.toString()+")'></p>";
+            }
+            $(".conditiontable").html(htmlvalue);
+        }
+        </script>
+    </body>
+</html>
