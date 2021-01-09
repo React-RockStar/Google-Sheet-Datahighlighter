@@ -788,6 +788,8 @@ function condition(lab, val,ind, con, x, y) {
                         ind1=4;
                     if(arr.fieldoption[1]=="Last Time")
                         ind1=2;
+                    if(arr.fieldoption[1]=="List Name")
+                        ind1=6;
                     val1=val[ind1];
                     // ss.getRange(1,1).setValue(x.toString()+y.toString()+flag+arr.andor+val[2]);
                     ////////////////////////
@@ -845,6 +847,8 @@ function condition(lab, val,ind, con, x, y) {
                             ind1=4;
                         if(arr.fieldoption[1]=="Last Time")
                             ind1=2;
+                        if(arr.fieldoption[1]=="List Name")
+                            ind1=6;
                         val1=val[ind1];// 
                     
                         ////////////////////////
@@ -940,22 +944,22 @@ var cardIDs=[];
 function onOpen(e) {
     SpreadsheetApp.getUi() // Or DocumentApp or FormApp.
         .createMenu('Data Highlighter for Trello')
-        .addItem('Start', 'Trello_Sheet_Open')
-        .addItem('License', 'Trello_Sheet_activate')
+        .addItem('Start new session', 'Trello_Sheet_New')
+        .addItem('Restore last session', 'Trello_Sheet_Restore')
     //     .addItem('4)Set Triggers',"createTimeDrivenTriggers")
         .addToUi();
 //   deleteTrigger();
 }
 
-function Trello_Sheet_Open() {
-    var html = HtmlService.createHtmlOutputFromFile('page')
+function Trello_Sheet_New() {
+    var html = HtmlService.createHtmlOutputFromFile('new')
       .setTitle('Data Highlighter for Trello')
       .setWidth(300);
     SpreadsheetApp.getUi().showSidebar(html);
 }
 
-function Trello_Sheet_activate() {
-    var html = HtmlService.createHtmlOutputFromFile('activate')
+function Trello_Sheet_Restore() {
+    var html = HtmlService.createHtmlOutputFromFile('restore')
         .setTitle('Data Highlighter for Trello')
         .setWidth(300);
     SpreadsheetApp.getUi().showSidebar(html);

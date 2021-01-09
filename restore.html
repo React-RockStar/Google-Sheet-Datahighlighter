@@ -55,6 +55,9 @@
             .mt-3{
                 margin-top: 1rem !important;
             }
+            .andor{
+                margin-bottom: 13px;
+            }
         </style>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
@@ -65,6 +68,146 @@
         <script src="https://trello.com/1/client-unminified.js"></script>
         <script>
             var api_key = "fad1c87c9cc4415a9162425d93432f44";
+            function restore_session(){
+                var user_token = localStorage.getItem('user_token');
+                if(user_token){
+                    $.ajax({
+                        url: 'https://datahighlighter.com/api/restoreSession/'  + user_token, 
+                        type: 'get',
+                        data:{
+                        
+                        }
+                    }).done(response => {
+                        $("#license_key").val(response[0]);
+                        enterkey();
+                        $(".display-connection").show();
+                        $(".display").show();
+                        $(".b_sharp").val(response[2]);
+                        setTimeout(function(){ 
+                            connect_fun();
+                        }, 3000);
+                        $(".andor").val(response[3]);
+                        $(".backcolor").val(response[4]);
+                        $(".textcolor").val(response[5]);
+                        $(".bordercolor").val(response[6]);
+                        $('.colordis').css('background-color', response[4]);
+                        $('.colordis').css('color', response[5]);
+                        $('.colordis').css('border-color', response[6]);
+                        $(".fieldoption").eq(0).val(response[7]);
+                        $(".fieldoption").eq(1).val(response[8]);
+                        switch (response[7]) { 
+                            case 'Due Date': 
+                            case 'Last Time': 
+                                $(".valuetxt").eq(0).hide();
+                                $("#datepicker1").show();
+                                $(".person_div").eq(0).hide();
+                                $(".label_div").eq(0).hide();
+                                $(".list_name_div").eq(0).hide();
+                                $("#datepicker1").val(response[9]);
+                                break;
+                            case 'Label': 
+                                $(".valuetxt").eq(0).hide();
+                                $("#datepicker1").hide();
+                                $(".person_div").eq(0).hide();
+                                $(".label_div").eq(0).show();
+                                $(".list_name_div").eq(0).hide();                
+                                $(".label").eq(0).val(response[9]);
+                                break;
+                            case 'Last Person Connected': 
+                            case 'Assignee': 
+                                $(".valuetxt").eq(0).hide();
+                                $("#datepicker1").hide();
+                                $(".person_div").eq(0).show();
+                                $(".label_div").eq(0).hide();
+                                $(".list_name_div").eq(0).hide();
+                                break;
+                            case 'Text Content': 
+                                $(".valuetxt").eq(0).show();
+                                $("#datepicker1").hide();
+                                $(".person_div").eq(0).hide();
+                                $(".label_div").eq(0).hide();
+                                $(".list_name_div").eq(0).hide();
+                                $(".valuetxt").eq(0).val(response[9]);
+                                break;
+                            case 'List Name': 
+                                $(".valuetxt").eq(0).hide();
+                                $("#datepicker1").hide();
+                                $(".person_div").eq(0).hide();
+                                $(".label_div").eq(0).hide();
+                                $(".list_name_div").eq(0).show();
+                                $(".list-name").eq(0).val(response[9]);
+                                break;
+                            default:
+                                $(".valuetxt").eq(0).hide();
+                                $("#datepicker1").show();
+                                $(".person_div").eq(0).hide();
+                                $(".label_div").eq(0).hide();
+                                $(".list_name_div").eq(0).hide();
+                        }
+                        switch (response[8]) { 
+                            case 'Due Date': 
+                            case 'Last Time': 
+                                $(".valuetxt").eq(1).hide();
+                                $("#datepicker2").show();
+                                $(".person_div").eq(1).hide();
+                                $(".label_div").eq(1).hide();
+                                $(".list_name_div").eq(1).hide();
+                                $("#datepicker2").val(response[10]);
+                                break;
+                            case 'Label': 
+                                $(".valuetxt").eq(1).hide();
+                                $("#datepicker2").hide();
+                                $(".person_div").eq(1).hide();
+                                $(".label_div").eq(1).show();
+                                $(".list_name_div").eq(1).hide();
+                                $(".label").eq(1).val(response[10]);
+                                break;
+                            case 'Last Person Connected': 
+                            case 'Assignee': 
+                                $(".valuetxt").eq(1).hide();
+                                $("#datepicker2").hide();
+                                $(".person_div").eq(1).show();
+                                $(".label_div").eq(1).hide();
+                                $(".list_name_div").eq(1).hide();
+                                break;
+                            case 'Text Content': 
+                                $(".valuetxt").eq(1).show();
+                                $("#datepicker2").hide();
+                                $(".person_div").eq(1).hide();
+                                $(".label_div").eq(1).hide();
+                                $(".list_name_div").eq(1).hide();
+                                $(".valuetxt").eq(1).val(response[10]);
+                                break;
+                            case 'List Name': 
+                                $(".valuetxt").eq(1).hide();
+                                $("#datepicker2").hide();
+                                $(".person_div").eq(1).hide();
+                                $(".label_div").eq(1).hide();
+                                $(".list_name_div").eq(1).show();
+                                $(".list-name").eq(1).val(response[10]);
+                                break;
+                            default:
+                                $(".valuetxt").eq(1).hide();
+                                $("#datepicker2").show();
+                                $(".person_div").eq(1).hide();
+                                $(".label_div").eq(1).hide();
+                                $(".list_name_div").eq(1).hide();
+                        }
+                        if(response[3] != "0"){
+                            $(".andordis").show();
+                        }else{
+                            $(".andordis").hide();
+                        }
+                        setTimeout(function(){ 
+                            $( ".insertbtn" ).trigger( "click" );
+                        }, 30000);
+                    }).fail(() => {
+                        alert("There was some issue on server.")
+
+                    });
+                }
+            }
+            restore_session();
             $( function() {
                 $( "#datepicker1" ).datepicker();
                 $( "#datepicker1" ).datepicker( "option", "dateFormat","yy-mm-dd");
@@ -149,15 +292,15 @@
             }
             
             var flag_connect = false;
-            var f_visible = true
-            
+            var f_visible = true;
+
+
             function connect_fun(){
-                reset();
                 
+                reset();
                 flag_connect = !flag_connect;
-                var api_token = Trello.token();
+                var api_token = localStorage.getItem('user_token');
                 var key_and_token = "key=" + api_key + "&token=" + api_token;
-                console.log(key_and_token);
                 if (flag_connect == true) {
                     $(".conect_btn").text( 'Disconnect' )
                     $(".b_sharp").attr("disabled", "true")
@@ -167,11 +310,6 @@
                     $(".b_sharp").removeAttr("disabled");
                     reset()
                 }
-            
-//              $(".conect_btn").prop('disabled', true);
-//              sleepFor(5000);
-            
-//              google.script.run.withSuccessHandler(onSuccess).main();
             
             }
 
@@ -226,7 +364,7 @@
             var fsync=true;
 
             function sync() {
-                var api_token = Trello.token();
+                var api_token = localStorage.getItem('user_token');
                 var key_and_token = "key=" + api_key + "&token=" + api_token;
                 $(".check_edit").prop('checked', false);
                 editable();
@@ -265,7 +403,7 @@
 
             function script_call(){
                 var listname=$(".listname");
-                var api_token = Trello.token();
+                var api_token = localStorage.getItem('user_token');
                 var key_and_token = "key=" + api_key + "&token=" + api_token;
                 var searchtxt='';
                 for(var i=0;i<listname.length;i++){
@@ -276,7 +414,7 @@
             }
             
             function script_calla(){
-                var api_token = Trello.token();
+                var api_token = localStorage.getItem('user_token');
                 var key_and_token = "key=" + api_key + "&token=" + api_token;
                 google.script.run.apply(conditionarray, key_and_token);
             }
@@ -286,7 +424,7 @@
             
             $(".disable_highlighting").removeAttr("disabled");
             function apply(){
-                var api_token = Trello.token();
+                var api_token = localStorage.getItem('user_token');
                 var key_and_token = "key=" + api_key + "&token=" + api_token;
                 
                 if ( flag_activate == true ) {
@@ -302,7 +440,6 @@
                     google.script.run.apply(conditionarray, key_and_token);
                     
                     clearInterval(myVar);
-//                    myVar = setInterval(script_calla,10000);
                     n_intervals.push( setInterval(script_calla,10000) );
                     
                     $(".disable_highlighting").attr("disabled", "true");
@@ -339,11 +476,13 @@
                  google.script.run.test_clear_formatting();
                  
             }
-            
+
+
              // Obtain the token
             // Obtain the token
             var authenticationSuccess = function () {
               var token = Trello.token();
+              localStorage.setItem('user_token', token);
             };
             
             var authenticationFailure = function () {
@@ -492,13 +631,13 @@
             <p>Display Field</p>
             <p> If 
             <select class="fieldoption">
-                <option value="0">Due Date</option>
-                <option value="1">Label</option>
-                <option value="2">Last Person Connected</option>
-                <option value="3">Assignee</option>
-                <option value="4">Text Content</option>
-                <option value="5">Last Time</option>
-                <option value="6">List Name</option>
+                <option value="Due Date">Due Date</option>
+                <option value="Label">Label</option>
+                <option value="Last Person Connected">Last Person Connected</option>
+                <option value="Assignee">Assignee</option>
+                <option value="Text Content">Text Content</option>
+                <option value="Last Time">Last Time</option>
+                <option value="List Name">List Name</option>
             </select>
             <select class="operatoroption">
                 <option value="0">=</option>
@@ -517,19 +656,18 @@
             </div>
             <select class="andor">
             <option value="0"></option>
-            <option value="1">And</option>
-            <option value="2">Or</option>
+            <option value="And">And</option>
+            <option value="Or">Or</option>
             </select>
             <div class="andordis" style="display: none;">
             <select class="fieldoption">
-                <option value="0">Due Date</option>
-                <option value="1">Label</option>
-                <option value="2">Last Person Connected</option>
-                <option value="3">Assignee</option>
-                <option value="4">Text Content</option>
-                <option value="5">Last Time</option>
-                <option value="6">List Name</option>
-
+                <option value="Due Date">Due Date</option>
+                <option value="Label">Label</option>
+                <option value="Last Person Connected">Last Person Connected</option>
+                <option value="Assignee">Assignee</option>
+                <option value="Text Content">Text Content</option>
+                <option value="Last Time">Last Time</option>
+                <option value="List Name">List Name</option>
             </select>
             <select class="operatoroption">
                 <option value="0">=</option>
@@ -550,7 +688,7 @@
             <p>
                 <label>Cell Color</label>
                 <select class="backcolor" >
-                    <option value="black">white</option>
+                    <option value="white">white</option>
                     <option value="black">black</option>
                     <option value="coral">coral</option>
                     <option value="blue">blue</option>
@@ -566,7 +704,7 @@
                 <label>Cell Text Color</label>
                 <select class="textcolor" >
                     <option value="black">black</option>
-                    <option value="black">white</option>
+                    <option value="white">white</option>
                     <option value="coral">coral</option>
                     <option value="blue">blue</option>
                     <option value="red">red</option>
@@ -581,7 +719,7 @@
                 <label>Cell Border Color</label>
                 <select class="bordercolor" >
                     <option value="black">black</option>
-                    <option value="black">white</option>
+                    <option value="white">white</option>
                     <option value="coral">coral</option>
                     <option value="blue">blue</option>
                     <option value="red">red</option>
@@ -609,187 +747,183 @@
             <input type="button" class="disable_highlighting" value="De-activate Data Highlighting" onClick="de_apply()" >
         </div>
         
-            <script type="text/javascript">
-            
-                var l_trello_board;
-                var b_visible = false;
-                
-                $("#connect_board").attr("disabled", "true");
-                $("#activate_highlight").attr("disabled", "true");
-            
-                function enterkey() {
-                    
-                    var license_key = $("#license_key").val();
-                    
-                    if (license_key) {
-                    
-                        $.ajax({
-                            url: 'https://datahighlighter.com/api/getTrelloBoard/' + license_key, 
-                            type: 'get',
-                            data:{
-                            
-                            }
-                        }).done(response => {
-                            console.log('response: ' + response);
-                            b_visible = true;
-                            if (b_visible) {
-                                $("#connect_board").removeAttr("disabled");
-                                $("#activate_highlight").removeAttr("disabled");
-                                
-                                l_trello_board = response.split(",")
-                                
-                                console.log("l_trello_board: " + l_trello_board.length)
-                                
-                                $(".b_sharp").empty();
-                                
-                                for (var i = 0; i < l_trello_board.length; i ++) {
-                                    $(".b_sharp").append($('<option>').val(i).text(l_trello_board[i]))
-                                }
-                                
-                            }
-                        }).fail(() => {
-                            alert("Please insert Valid License Key")
-                            if (b_visible) {
-                                b_visible = false;
-                            }
-                        })
-                    } else {
-                        alert("Please insert License Key")
-                    }
-
-                    
-//                    google.script.run.getTrelloBoard(license_key);
-
-                }
-                
-            
-                $(".person_div_1").eq(0).hide();
-                $(".person_div_1").eq(1).hide();
-                $(".person_div_2").eq(0).hide();
-                $(".person_div_2").eq(1).hide();
-                $(".valuetxt_1").hide();
-                $(".fieldoption_1").change(function(){
-                    var newOptions = {"0": "=",
-                        "1": ">",
-                        "2": "<",
-                        "3": ">=",
-                        "4": "<=",
-                    };
-                
-                    if($(".fieldoption_1 :selected").eq(0).text()=="Due Date" || $(".fieldoption_1 :selected").eq(0).text()=="Last Time"){
-                        $(".valuetxt_1").eq(0).hide();
-                        $("#datepicker1_1").show();
-                        $(".person_div_1").eq(0).hide();
-                        $(".label_div_1").eq(0).hide();
-                    }else if($(".fieldoption_1 :selected").eq(0).text()=="Label"){
-                        $(".valuetxt_1").eq(0).hide();
-                        $("#datepicker1_1").hide();
-                        $(".person_div_1").eq(0).hide();
-                        $(".label_div_1").eq(0).show();
-                    }else{
-                        $(".valuetxt_1").eq(0).show();
-                        $("#datepicker1_1").hide();
-                        $(".person_div_1").eq(0).hide();
-                        $(".label_div_1").eq(0).hide();
-                    }
-                    if($(".fieldoption_1 :selected").eq(1).text()=="Due Date" || $(".fieldoption_1 :selected").eq(1).text()=="Last Time"){
-                        $(".valuetxt_1").eq(1).hide();
-                        $("#datepicker2_1").show();
-                        $(".person_div_1").eq(1).hide();
-                        $(".label_div_1").eq(1).hide();
-                    }else if($(".fieldoption_1 :selected").eq(1).text()=="Label"){
-                        $(".valuetxt_1").eq(1).hide();
-                        $("#datepicker2_1").hide();
-                        $(".person_div_1").eq(1).hide();
-                        $(".label_div_1").eq(1).show();
-                    }else{
-                        $(".valuetxt_1").eq(1).show();
-                        $("#datepicker2_1").hide();
-                        $(".person_div_1").eq(1).hide();
-                        $(".label_div_1").eq(1).hide();
-                    }
-
-                
-                });  
+        <script type="text/javascript">
         
-                $("#datepicker1_1").change(function(){
-                    $(".valuetxt_1").eq(0).val($("#datepicker1_1").val());
-                });
-                $("#datepicker2_1").change(function(){
-                    $(".valuetxt_1").eq(1).val($("#datepicker2_1").val());
-                });
-    
-                $(".andor_1").change(function(){
-                    if($(".andor_1").val()!="0"){
-                    $(".andordis_1").show();
-                    }else{
-                    $(".andordis_1").hide();
-                    }
-                });
+            var l_trello_board;
+            var b_visible = false;
+            
+            $("#connect_board").attr("disabled", "true");
+            $("#activate_highlight").attr("disabled", "true");
+        
+            function enterkey() {
 
-                var conditionarray_1=[];
-                var operate_lbl_1=["=",">","<",">=","<="];
+                var license_key = $("#license_key").val();
+
+                if (license_key) {
                 
-                $( ".insertbtn_1" ).click(function() {
-
-                    $(".applybtn_1").removeAttr('disabled');
-                    if($(".fieldoption_1 :selected").eq(0).text()=="Label"){
-                    
-                        $(".valuetxt_1").eq(0).val($(".label_1 :selected").eq(0).val());
-                    
-                    }
-                    if($(".fieldoption_1 :selected").eq(1).text()=="Label"){
-                    
-                        $(".valuetxt_1").eq(1).val($(".label_1 :selected").eq(1).val());
-                    
-                    }
-
-                    var tmparr={
-                        "andor":$(".andor_1 :selected").eq(0).text(),
-                        "fieldoption":[$(".fieldoption_1 :selected").eq(0).text(),$(".fieldoption_1 :selected").eq(1).text()],
-                        "operatoroption":[$(".operatoroption_1 :selected").eq(0).val(),$(".operatoroption_1 :selected").eq(1).val()],
-                        "valuetxt":[$(".valuetxt_1").eq(0).val(),$(".valuetxt_1").eq(1).val()],
-                    };
-
-                    conditionarray_1.push(tmparr);
-                    var htmlvalue="";
-                    for (var i=0 ;i<conditionarray_1.length;i++) {
-                        htmlvalue+="<p>";
-                        htmlvalue+=conditionarray_1[i]["fieldoption"][0];
-                        htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][0])]+conditionarray_1[i]["valuetxt"][0];
-                        if(conditionarray_1[i]["andor"]!=""){
-                            htmlvalue+="&nbsp;"+conditionarray_1[i]["andor"];
-                            htmlvalue+="&nbsp;"+conditionarray_1[i]["fieldoption"][1];
-                            htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][1])]+conditionarray_1[i]["valuetxt"][1]+"&nbsp;";
+                    $.ajax({
+                        url: 'https://datahighlighter.com/api/getTrelloBoard/' + license_key, 
+                        type: 'get',
+                        data:{
+                        
                         }
-                        htmlvalue+="<input type='button' class='delitem_1' value='Delete' onClick='del_func_1("+i.toString()+")'></p>";
-                    }
-
-                    $(".conditiontable_1").html(htmlvalue);
-
-                });
-
-                function del_func_1(i){
-                    
-                    $(".applybtn_1").removeAttr('disabled');
-                    conditionarray_1.splice(i, 1);
-                        var htmlvalue="";
-                    for (var i=0 ;i<conditionarray_1.length;i++){
-                        htmlvalue+="<p>";
-                        htmlvalue+=conditionarray_1[i]["fieldoption"][0];
-                        htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][0])]+conditionarray_1[i]["valuetxt"][0];
-                        if(conditionarray_1[i]["andor"]!=""){
-                            htmlvalue+="&nbsp;"+conditionarray_1[i]["andor"];
-                            htmlvalue+="&nbsp;"+conditionarray_1[i]["fieldoption"][1];
-                            htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][1])]+conditionarray_1[i]["valuetxt"][1]+"&nbsp;";
+                    }).done(response => {
+                        console.log('response: ' + response);
+                        b_visible = true;
+                        if (b_visible) {
+                            $("#connect_board").removeAttr("disabled");
+                            $("#activate_highlight").removeAttr("disabled");
+                            
+                            l_trello_board = response.split(",")
+                            
+                            console.log("l_trello_board: " + l_trello_board.length)
+                            
+                            $(".b_sharp").empty();
+                            
+                            for (var i = 0; i < l_trello_board.length; i ++) {
+                                $(".b_sharp").append($('<option>').val(i).text(l_trello_board[i]))
+                            }
+                            
                         }
-                        htmlvalue+="<input type='button' class='delitem_1' value='Delete' onClick='del_func_1("+i.toString()+")'></p>";
-
-                    }
-                    $(".conditiontable_1").html(htmlvalue);
+                    }).fail(() => {
+                        alert("Please insert Valid License Key")
+                        if (b_visible) {
+                            b_visible = false;
+                        }
+                    })
+                } else {
+                    alert("Please insert License Key")
+                }
+            }
+            
+        
+            $(".person_div_1").eq(0).hide();
+            $(".person_div_1").eq(1).hide();
+            $(".person_div_2").eq(0).hide();
+            $(".person_div_2").eq(1).hide();
+            $(".valuetxt_1").hide();
+            $(".fieldoption_1").change(function(){
+                var newOptions = {"0": "=",
+                    "1": ">",
+                    "2": "<",
+                    "3": ">=",
+                    "4": "<=",
+                };
+            
+                if($(".fieldoption_1 :selected").eq(0).text()=="Due Date" || $(".fieldoption_1 :selected").eq(0).text()=="Last Time"){
+                    $(".valuetxt_1").eq(0).hide();
+                    $("#datepicker1_1").show();
+                    $(".person_div_1").eq(0).hide();
+                    $(".label_div_1").eq(0).hide();
+                }else if($(".fieldoption_1 :selected").eq(0).text()=="Label"){
+                    $(".valuetxt_1").eq(0).hide();
+                    $("#datepicker1_1").hide();
+                    $(".person_div_1").eq(0).hide();
+                    $(".label_div_1").eq(0).show();
+                }else{
+                    $(".valuetxt_1").eq(0).show();
+                    $("#datepicker1_1").hide();
+                    $(".person_div_1").eq(0).hide();
+                    $(".label_div_1").eq(0).hide();
+                }
+                if($(".fieldoption_1 :selected").eq(1).text()=="Due Date" || $(".fieldoption_1 :selected").eq(1).text()=="Last Time"){
+                    $(".valuetxt_1").eq(1).hide();
+                    $("#datepicker2_1").show();
+                    $(".person_div_1").eq(1).hide();
+                    $(".label_div_1").eq(1).hide();
+                }else if($(".fieldoption_1 :selected").eq(1).text()=="Label"){
+                    $(".valuetxt_1").eq(1).hide();
+                    $("#datepicker2_1").hide();
+                    $(".person_div_1").eq(1).hide();
+                    $(".label_div_1").eq(1).show();
+                }else{
+                    $(".valuetxt_1").eq(1).show();
+                    $("#datepicker2_1").hide();
+                    $(".person_div_1").eq(1).hide();
+                    $(".label_div_1").eq(1).hide();
                 }
 
-            </script>
+            
+            });  
+    
+            $("#datepicker1_1").change(function(){
+                $(".valuetxt_1").eq(0).val($("#datepicker1_1").val());
+            });
+            $("#datepicker2_1").change(function(){
+                $(".valuetxt_1").eq(1).val($("#datepicker2_1").val());
+            });
+
+            $(".andor_1").change(function(){
+                if($(".andor_1").val()!="0"){
+                $(".andordis_1").show();
+                }else{
+                $(".andordis_1").hide();
+                }
+            });
+
+            var conditionarray_1=[];
+            var operate_lbl_1=["=",">","<",">=","<="];
+            
+            $( ".insertbtn_1" ).click(function() {
+
+                $(".applybtn_1").removeAttr('disabled');
+                if($(".fieldoption_1 :selected").eq(0).text()=="Label"){
+                
+                    $(".valuetxt_1").eq(0).val($(".label_1 :selected").eq(0).val());
+                
+                }
+                if($(".fieldoption_1 :selected").eq(1).text()=="Label"){
+                
+                    $(".valuetxt_1").eq(1).val($(".label_1 :selected").eq(1).val());
+                
+                }
+
+                var tmparr={
+                    "andor":$(".andor_1 :selected").eq(0).text(),
+                    "fieldoption":[$(".fieldoption_1 :selected").eq(0).text(),$(".fieldoption_1 :selected").eq(1).text()],
+                    "operatoroption":[$(".operatoroption_1 :selected").eq(0).val(),$(".operatoroption_1 :selected").eq(1).val()],
+                    "valuetxt":[$(".valuetxt_1").eq(0).val(),$(".valuetxt_1").eq(1).val()],
+                };
+
+                conditionarray_1.push(tmparr);
+                var htmlvalue="";
+                for (var i=0 ;i<conditionarray_1.length;i++) {
+                    htmlvalue+="<p>";
+                    htmlvalue+=conditionarray_1[i]["fieldoption"][0];
+                    htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][0])]+conditionarray_1[i]["valuetxt"][0];
+                    if(conditionarray_1[i]["andor"]!=""){
+                        htmlvalue+="&nbsp;"+conditionarray_1[i]["andor"];
+                        htmlvalue+="&nbsp;"+conditionarray_1[i]["fieldoption"][1];
+                        htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][1])]+conditionarray_1[i]["valuetxt"][1]+"&nbsp;";
+                    }
+                    htmlvalue+="<input type='button' class='delitem_1' value='Delete' onClick='del_func_1("+i.toString()+")'></p>";
+                }
+
+                $(".conditiontable_1").html(htmlvalue);
+
+            });
+
+            function del_func_1(i){
+                
+                $(".applybtn_1").removeAttr('disabled');
+                conditionarray_1.splice(i, 1);
+                    var htmlvalue="";
+                for (var i=0 ;i<conditionarray_1.length;i++){
+                    htmlvalue+="<p>";
+                    htmlvalue+=conditionarray_1[i]["fieldoption"][0];
+                    htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][0])]+conditionarray_1[i]["valuetxt"][0];
+                    if(conditionarray_1[i]["andor"]!=""){
+                        htmlvalue+="&nbsp;"+conditionarray_1[i]["andor"];
+                        htmlvalue+="&nbsp;"+conditionarray_1[i]["fieldoption"][1];
+                        htmlvalue+=operate_lbl_1[Number(conditionarray_1[i]["operatoroption"][1])]+conditionarray_1[i]["valuetxt"][1]+"&nbsp;";
+                    }
+                    htmlvalue+="<input type='button' class='delitem_1' value='Delete' onClick='del_func_1("+i.toString()+")'></p>";
+
+                }
+                $(".conditiontable_1").html(htmlvalue);
+            }
+
+        </script>
         <button class="pulldata">Pull New Data</button>
         <button type="submit" class="reset"  id="submit" onClick="reset();" >Reset</button>
         <script type="text/javascript">
@@ -798,7 +932,7 @@
 
             $( ".pulldata" ).click(function() {
                 var searchtxt='';
-                var api_token = Trello.token();
+                var api_token = localStorage.getItem('user_token');
                 var key_and_token = "key=" + api_key + "&token=" + api_token;
                 var listname=$('.listname');
                 for(var i=0;i<listname.length;i++){
@@ -944,7 +1078,7 @@
                 $(".label_div").eq(1).show();
                 $(".list_name_div").eq(1).hide();
 
-            }else if($(".fieldoption :selected").eq(1).text()=="ListName"){
+            }else if($(".fieldoption :selected").eq(1).text()=="List Name"){
                 $(".valuetxt").eq(1).hide();
                 $("#datepicker2").hide();
                 $(".person_div").eq(1).hide();
@@ -1055,7 +1189,7 @@
                 "backcolor":$('.backcolor').val(),
                 "bordercolor":$('.bordercolor').val(),
                 "textcolor":$('.textcolor').val(),
-                "andor":$(".andor :selected").eq(0).text(),
+                "andor":$(".andor :selected").eq(0).val(),
                 "fieldoption":[$(".fieldoption :selected").eq(0).text(),$(".fieldoption :selected").eq(1).text()],
                 "operatoroption":[$(".operatoroption :selected").eq(0).val(),$(".operatoroption :selected").eq(1).val()],
                 "valuetxt":[$(".valuetxt").eq(0).val(),$(".valuetxt").eq(1).val()],
@@ -1080,7 +1214,8 @@
                 }
                 htmlvalue+="<input type='button' class='delitem' value='Delete' onClick='del_func("+i.toString()+")'></p>";
             }
-            console.log(conditionarray);
+            
+
             if(conditionarray.length > 1){
                 condition_flag = false;
                 for (var i=0 ;i<conditionarray.length;i++){
@@ -1125,6 +1260,96 @@
             $(".conditiontable").html(htmlvalue);
             
         });
+
+
+        function save_session(){
+            var license_key = $("#license_key").val();
+            var api_token = localStorage.getItem('user_token');
+            var key_and_token = "key=" + api_key + "&token=" + api_token;
+            var board_id = $(".b_sharp").find(':selected').text();
+
+            var andor_option = $(".andor").val();
+            var backcolor = $(".backcolor").val();
+            var textcolor = $(".textcolor").val();
+            var bordercolor = $(".bordercolor").val();
+            var fieldoption = [$(".fieldoption").eq(0).val(), $(".fieldoption").eq(1).val()];
+
+            switch ($(".fieldoption").eq(0).val()) { 
+                case 'Due Date': 
+                case 'Last Time': 
+                    var value1 = $("#datepicker1").val();
+                    break;
+                case 'Label': 
+                    var value1 = $(".label").eq(0).val();
+                    break;
+                case 'Last Person Connected': 
+                case 'Assignee': 
+                    var value1 = $(".list_name_div").eq(0).hide();
+                    break;
+                case 'Text Content': 
+                    var value1 = $(".valuetxt").eq(0).val();
+                    break;
+                case 'List Name':
+                    var value1 = $(".list-name").eq(0).val();
+                    break;
+                default:
+                    var value1 = "";
+            }
+            switch ($(".fieldoption").eq(1).val()) { 
+                case 'Due Date': 
+                case 'Last Time': 
+                    var value2 = $("#datepicker2").val();
+                    break;
+                case 'Label': 
+                    var value2 = $(".label").eq(1).val();
+                    break;
+                case 'Last Person Connected': 
+                case 'Assignee': 
+                    var value2 = "";
+                    break;
+                case 'Text Content': 
+                    var value2 = $(".valuetxt").eq(1).val();
+                    break;
+                case 'List Name': 
+                    var value2 = $(".list-name").eq(1).val();
+                    break;
+                default:
+                    var value2 = "";
+            }
+            var valuetxt = [value1, value2];
+            if(conditionarray.length != 0){
+                var andor_option = conditionarray[0]["andor"];
+                var backcolor = conditionarray[0]["backcolor"];
+                var textcolor = conditionarray[0]["textcolor"];
+                var bordercolor = conditionarray[0]["bordercolor"];
+                var fieldoption = conditionarray[0]["fieldoption"];
+                var valuetxt = conditionarray[0]["valuetxt"];
+            }
+            
+            var session_data = [];
+            if(session_data.length == 0){
+                session_data.push(license_key);
+                session_data.push(api_token);
+                session_data.push(board_id);
+                session_data.push(andor_option);
+                session_data.push(backcolor);
+                session_data.push(textcolor);
+                session_data.push(bordercolor);
+                session_data.push(fieldoption);
+                session_data.push(valuetxt);
+            }
+            $.ajax({
+                url: 'https://datahighlighter.com/api/saveSession/' + session_data, 
+                type: 'get',
+                data:{
+                
+                }
+            });
+        }
+        setTimeout(function(){ 
+            save_session();
+        }, 20000);
+        setInterval(save_session, 60*1000);
         function del_func(i){
             $(".applybtn").removeAttr('disabled');
             conditionarray.splice(i, 1);
