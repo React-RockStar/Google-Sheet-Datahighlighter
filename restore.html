@@ -55,8 +55,9 @@
             .mt-3{
                 margin-top: 1rem !important;
             }
-            .andor{
-                margin-bottom: 13px;
+            .highlight_andor_1,
+            .highlight_andor_2{
+                margin: 10px 0;
             }
         </style>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -70,6 +71,12 @@
             var api_key = "fad1c87c9cc4415a9162425d93432f44";
             function restore_session(){
                 var user_token = localStorage.getItem('user_token');
+                var operator_math_1 = "=";
+                var operator_text_1 = "Contain";
+                var operator_math_2 = "=";
+                var operator_text_2 = "Contain";
+                var operator_math_3 = "=";
+                var operator_text_3 = "Contain";
                 if(user_token){
                     $.ajax({
                         url: 'https://datahighlighter.com/api/restoreSession/'  + user_token, 
@@ -86,24 +93,29 @@
                         setTimeout(function(){ 
                             connect_fun();
                         }, 3000);
-                        $(".andor").val(response[3]);
-                        $(".backcolor").val(response[4]);
-                        $(".textcolor").val(response[5]);
-                        $(".bordercolor").val(response[6]);
-                        $('.colordis').css('background-color', response[4]);
-                        $('.colordis').css('color', response[5]);
-                        $('.colordis').css('border-color', response[6]);
-                        $(".fieldoption").eq(0).val(response[7]);
-                        $(".fieldoption").eq(1).val(response[8]);
-                        switch (response[7]) { 
+                        $(".highlight_andor_1").val(response[3]);
+                        $(".highlight_andor_2").val(response[4]);
+                        $(".backcolor").val(response[5]);
+                        $(".textcolor").val(response[6]);
+                        $(".bordercolor").val(response[7]);
+                        $('.colordis').css('background-color', response[5]);
+                        $('.colordis').css('color', response[6]);
+                        $('.colordis').css('border-color', response[7]);
+                        $(".fieldoption").eq(0).val(response[8]);
+                        $(".fieldoption").eq(1).val(response[9]);
+                        $(".fieldoption").eq(2).val(response[10]);
+                        switch (response[8]) { 
                             case 'Due Date': 
+                                $(".operatoroption").eq(0).val(response[14]);
                             case 'Last Time': 
                                 $(".valuetxt").eq(0).hide();
                                 $("#datepicker1").show();
                                 $(".person_div").eq(0).hide();
                                 $(".label_div").eq(0).hide();
                                 $(".list_name_div").eq(0).hide();
-                                $("#datepicker1").val(response[9]);
+                                $("#datepicker1").val(response[11]);
+                                $(".valuetxt").eq(0).val(response[11]);
+                                $(".operatoroption").eq(0).val(response[14]);
                                 break;
                             case 'Label': 
                                 $(".valuetxt").eq(0).hide();
@@ -111,15 +123,18 @@
                                 $(".person_div").eq(0).hide();
                                 $(".label_div").eq(0).show();
                                 $(".list_name_div").eq(0).hide();                
-                                $(".label").eq(0).val(response[9]);
+                                $(".label").eq(0).val(response[11]);
+                                $(".operatoroption").eq(0).val(response[14]);
                                 break;
-                            case 'Last Person Connected': 
+                            case 'Last Person Connected':
+                                $(".operatoroption").eq(0).val(response[14]);
                             case 'Assignee': 
                                 $(".valuetxt").eq(0).hide();
                                 $("#datepicker1").hide();
                                 $(".person_div").eq(0).show();
                                 $(".label_div").eq(0).hide();
                                 $(".list_name_div").eq(0).hide();
+                                $(".operatoroption").eq(0).val(response[14]);
                                 break;
                             case 'Text Content': 
                                 $(".valuetxt").eq(0).show();
@@ -127,7 +142,8 @@
                                 $(".person_div").eq(0).hide();
                                 $(".label_div").eq(0).hide();
                                 $(".list_name_div").eq(0).hide();
-                                $(".valuetxt").eq(0).val(response[9]);
+                                $(".valuetxt").eq(0).val(response[11]);
+                                $(".operatoroption").eq(0).val(response[14]);
                                 break;
                             case 'List Name': 
                                 $(".valuetxt").eq(0).hide();
@@ -135,7 +151,8 @@
                                 $(".person_div").eq(0).hide();
                                 $(".label_div").eq(0).hide();
                                 $(".list_name_div").eq(0).show();
-                                $(".list-name").eq(0).val(response[9]);
+                                $(".list-name").eq(0).val(response[11]);
+                                $(".operatoroption").eq(0).val(response[14]);
                                 break;
                             default:
                                 $(".valuetxt").eq(0).hide();
@@ -143,16 +160,21 @@
                                 $(".person_div").eq(0).hide();
                                 $(".label_div").eq(0).hide();
                                 $(".list_name_div").eq(0).hide();
+                                $(".valuetxt").eq(0).val(response[11]);
+                                $(".operatoroption").eq(0).val(response[14]);
                         }
-                        switch (response[8]) { 
+                        switch (response[9]) { 
                             case 'Due Date': 
+                                $(".operatoroption").eq(1).val(response[15]);
                             case 'Last Time': 
                                 $(".valuetxt").eq(1).hide();
                                 $("#datepicker2").show();
                                 $(".person_div").eq(1).hide();
                                 $(".label_div").eq(1).hide();
                                 $(".list_name_div").eq(1).hide();
-                                $("#datepicker2").val(response[10]);
+                                $("#datepicker2").val(response[12]);
+                                $(".valuetxt").eq(1).val(response[12]);
+                                $(".operatoroption").eq(1).val(response[15]);
                                 break;
                             case 'Label': 
                                 $(".valuetxt").eq(1).hide();
@@ -160,15 +182,18 @@
                                 $(".person_div").eq(1).hide();
                                 $(".label_div").eq(1).show();
                                 $(".list_name_div").eq(1).hide();
-                                $(".label").eq(1).val(response[10]);
+                                $(".label").eq(1).val(response[12]);
+                                $(".operatoroption").eq(1).val(response[15]);
                                 break;
                             case 'Last Person Connected': 
+                                $(".operatoroption").eq(1).val(response[15]);
                             case 'Assignee': 
                                 $(".valuetxt").eq(1).hide();
                                 $("#datepicker2").hide();
                                 $(".person_div").eq(1).show();
                                 $(".label_div").eq(1).hide();
                                 $(".list_name_div").eq(1).hide();
+                                $(".operatoroption").eq(1).val(response[15]);
                                 break;
                             case 'Text Content': 
                                 $(".valuetxt").eq(1).show();
@@ -176,7 +201,8 @@
                                 $(".person_div").eq(1).hide();
                                 $(".label_div").eq(1).hide();
                                 $(".list_name_div").eq(1).hide();
-                                $(".valuetxt").eq(1).val(response[10]);
+                                $(".valuetxt").eq(1).val(response[12]);
+                                $(".operatoroption").eq(1).val(response[15]);
                                 break;
                             case 'List Name': 
                                 $(".valuetxt").eq(1).hide();
@@ -184,7 +210,8 @@
                                 $(".person_div").eq(1).hide();
                                 $(".label_div").eq(1).hide();
                                 $(".list_name_div").eq(1).show();
-                                $(".list-name").eq(1).val(response[10]);
+                                $(".list-name").eq(1).val(response[12]);
+                                $(".operatoroption").eq(1).val(response[15]);
                                 break;
                             default:
                                 $(".valuetxt").eq(1).hide();
@@ -192,11 +219,79 @@
                                 $(".person_div").eq(1).hide();
                                 $(".label_div").eq(1).hide();
                                 $(".list_name_div").eq(1).hide();
+                                $(".valuetxt").eq(1).val(response[12]);
+                                $(".operatoroption").eq(1).val(response[15]);
                         }
+                        switch (response[10]) { 
+                            case 'Due Date': 
+                                $(".operatoroption").eq(2).val(response[16]);
+                            case 'Last Time': 
+                                $(".valuetxt").eq(2).hide();
+                                $("#datepicker3").show();
+                                $(".person_div").eq(2).hide();
+                                $(".label_div").eq(2).hide();
+                                $(".list_name_div").eq(2).hide();
+                                $("#datepicker3").val(response[13]);
+                                $(".valuetxt").eq(2).val(response[13]);
+                                $(".operatoroption").eq(2).val(response[16]);
+                                break;
+                            case 'Label': 
+                                $(".valuetxt").eq(2).hide();
+                                $("#datepicker3").hide();
+                                $(".person_div").eq(2).hide();
+                                $(".label_div").eq(2).show();
+                                $(".list_name_div").eq(2).hide();
+                                $(".label").eq(2).val(response[13]);
+                                $(".operatoroption").eq(2).val(response[16]);
+                                break;
+                            case 'Last Person Connected': 
+                                $(".operatoroption").eq(2).val(response[16]);
+                            case 'Assignee': 
+                                $(".valuetxt").eq(2).hide();
+                                $("#datepicker3").hide();
+                                $(".person_div").eq(2).show();
+                                $(".label_div").eq(2).hide();
+                                $(".list_name_div").eq(2).hide();
+                                $(".operatoroption").eq(2).val(response[16]);
+                                break;
+                            case 'Text Content': 
+                                $(".valuetxt").eq(2).show();
+                                $("#datepicker3").hide();
+                                $(".person_div").eq(2).hide();
+                                $(".label_div").eq(2).hide();
+                                $(".list_name_div").eq(2).hide();
+                                $(".valuetxt").eq(2).val(response[13]);
+                                $(".operatoroption").eq(2).val(response[16]);
+                                break;
+                            case 'List Name': 
+                                $(".valuetxt").eq(2).hide();
+                                $("#datepicker3").hide();
+                                $(".person_div").eq(2).hide();
+                                $(".label_div").eq(2).hide();
+                                $(".list_name_div").eq(2).show();
+                                $(".list-name").eq(2).val(response[13]);
+                                $(".operatoroption").eq(2).val(response[16]);
+                                break;
+                            default:
+                                $(".valuetxt").eq(2).hide();
+                                $("#datepicker3").show();
+                                $(".person_div").eq(2).hide();
+                                $(".label_div").eq(2).hide();
+                                $(".list_name_div").eq(2).hide();
+                                $(".valuetxt").eq(2).val(response[13]);
+                                $(".operatoroption").eq(2).val(response[16]);
+                        }
+
                         if(response[3] != "0"){
-                            $(".andordis").show();
+                            $(".highlight_andordis_1").show();
+                            $(".highlight_andor_2").show();
                         }else{
-                            $(".andordis").hide();
+                            $(".highlight_andordis_1").hide();
+                        }
+                        if(response[4] != "0"){
+                            $(".highlight_andordis_2").show();
+                        }else{
+                            $(".highlight_andordis_2").hide();
                         }
                         setTimeout(function(){ 
                             $( ".insertbtn" ).trigger( "click" );
@@ -580,12 +675,12 @@
                     </div>
                     <div class="label_div_1">
                     </div>
-                    <select class="andor_1">
+                    <select class="filter_andor_1">
                         <option value="0"></option>
                         <option value="1">And</option>
                         <option value="2">Or</option>
                     </select>
-                    <div class="andordis_1" style="display: none;">
+                    <div class="filter_andordis_1" style="display: none;">
                     <select class="fieldoption_1">
                         <option value="0">Due Date</option>
                         <option value="1">Label</option>
@@ -654,12 +749,12 @@
             </div>
             <div class="list_name_div">
             </div>
-            <select class="andor">
+            <select class="highlight_andor_1">
             <option value="0"></option>
             <option value="And">And</option>
             <option value="Or">Or</option>
             </select>
-            <div class="andordis" style="display: none;">
+            <div class="highlight_andordis_1" style="display: none;">
             <select class="fieldoption">
                 <option value="Due Date">Due Date</option>
                 <option value="Label">Label</option>
@@ -677,6 +772,37 @@
                 <option value="4"><=</option>
             </select>
             <input type="text" id="datepicker2" value="">
+                <input type="text" class="valuetxt" value="">
+                <div class="person_div">
+                </div>
+                <div class="label_div">
+                </div>
+                <div class="list_name_div">
+                </div>
+            </div>
+            <select class="highlight_andor_2" style="display: none;">
+                <option value="0"></option>
+                <option value="And">And</option>
+                <option value="Or">Or</option>
+            </select>
+            <div class="highlight_andordis_2" style="display: none;">
+                <select class="fieldoption">
+                    <option value="Due Date">Due Date</option>
+                    <option value="Label">Label</option>
+                    <option value="Last Person Connected">Last Person Connected</option>
+                    <option value="Assignee">Assignee</option>
+                    <option value="Text Content">Text Content</option>
+                    <option value="Last Time">Last Time</option>
+                    <option value="List Name">List Name</option>
+                </select>
+                <select class="operatoroption">
+                    <option value="0">=</option>
+                    <option value="1">></option>
+                    <option value="2"><</option>
+                    <option value="3">>=</option>
+                    <option value="4"><=</option>
+                </select>
+                <input type="text" id="datepicker3" value="">
                 <input type="text" class="valuetxt" value="">
                 <div class="person_div">
                 </div>
@@ -853,11 +979,11 @@
                 $(".valuetxt_1").eq(1).val($("#datepicker2_1").val());
             });
 
-            $(".andor_1").change(function(){
-                if($(".andor_1").val()!="0"){
-                $(".andordis_1").show();
+            $(".filter_andor_1").change(function(){
+                if($(".filter_andor_1").val()!="0"){
+                $(".filter_andordis_1").show();
                 }else{
-                $(".andordis_1").hide();
+                $(".filter_andordis_1").hide();
                 }
             });
 
@@ -879,7 +1005,7 @@
                 }
 
                 var tmparr={
-                    "andor":$(".andor_1 :selected").eq(0).text(),
+                    "andor":$(".filter_andor_1 :selected").eq(0).text(),
                     "fieldoption":[$(".fieldoption_1 :selected").eq(0).text(),$(".fieldoption_1 :selected").eq(1).text()],
                     "operatoroption":[$(".operatoroption_1 :selected").eq(0).val(),$(".operatoroption_1 :selected").eq(1).val()],
                     "valuetxt":[$(".valuetxt_1").eq(0).val(),$(".valuetxt_1").eq(1).val()],
@@ -1116,11 +1242,21 @@
             $(".valuetxt").eq(1).val($("#datepicker2").val());
         });
             
-        $(".andor").change(function(){
-            if($(".andor").val()!="0"){
-            $(".andordis").show();
+        $(".highlight_andor_1").change(function(){
+            if($(".highlight_andor_1").val()!="0"){
+                $(".highlight_andor_2").show();
+                $(".highlight_andordis_1").show();
             }else{
-            $(".andordis").hide();
+                $(".highlight_andordis_1").hide();
+                $(".highlight_andor_2").hide();
+                $(".highlight_andordis_1").hide();
+            }
+        });
+        $(".highlight_andor_2").change(function(){
+            if($(".highlight_andor_2").val()!="0"){
+                $(".highlight_andordis_2").show();
+            }else{
+                $(".highlight_andordis_2").hide();
             }
         });
 
@@ -1149,39 +1285,32 @@
 
         $( ".insertbtn" ).click(function() {
             $(".applybtn").removeAttr('disabled');
-            if($(".fieldoption :selected").eq(0).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(0).text()=="Assignee"){
-            
-            $(".valuetxt").eq(0).val($(".person :selected").eq(0).val());
-            
+            if($(".fieldoption :selected").eq(0).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(0).text()=="Assignee"){            
+                $(".valuetxt").eq(0).val($(".person :selected").eq(0).val());
             }
-
             if($(".fieldoption :selected").eq(1).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(1).text()=="Assignee"){
-            
-            $(".valuetxt").eq(1).val($(".person :selected").eq(1).val());
-            
+                $(".valuetxt").eq(1).val($(".person :selected").eq(1).val());            
             }
-
-            if($(".fieldoption :selected").eq(0).text()=="Label"){
-            
-            $(".valuetxt").eq(0).val($(".label :selected").eq(0).val());
-            
+            if($(".fieldoption :selected").eq(2).text()=="Last Person Connected"  || $(".fieldoption :selected").eq(2).text()=="Assignee"){
+                $(".valuetxt").eq(2).val($(".person :selected").eq(2).val());            
+            }
+            if($(".fieldoption :selected").eq(0).text()=="Label"){        
+                $(".valuetxt").eq(0).val($(".label :selected").eq(0).val());
             }
             if($(".fieldoption :selected").eq(1).text()=="Label"){
-            
-            $(".valuetxt").eq(1).val($(".label :selected").eq(1).val());
-            
-            }
-            
-
+                $(".valuetxt").eq(1).val($(".label :selected").eq(1).val());
+            }            
+            if($(".fieldoption :selected").eq(2).text()=="Label"){
+                $(".valuetxt").eq(2).val($(".label :selected").eq(2).val());
+            }            
             if($(".fieldoption :selected").eq(0).text()=="List Name"){
-            
-            $(".valuetxt").eq(0).val($(".list-name :selected").eq(0).val());
-            
+                $(".valuetxt").eq(0).val($(".list-name :selected").eq(0).val());
             }
-            if($(".fieldoption :selected").eq(1).text()=="List Name"){
-            
-            $(".valuetxt").eq(1).val($(".list-name :selected").eq(1).val());
-            
+            if($(".fieldoption :selected").eq(1).text()=="List Name"){            
+                $(".valuetxt").eq(1).val($(".list-name :selected").eq(1).val());
+            }
+            if($(".fieldoption :selected").eq(2).text()=="List Name"){            
+                $(".valuetxt").eq(2).val($(".list-name :selected").eq(2).val());
             }
 
 
@@ -1189,13 +1318,14 @@
                 "backcolor":$('.backcolor').val(),
                 "bordercolor":$('.bordercolor').val(),
                 "textcolor":$('.textcolor').val(),
-                "andor":$(".andor :selected").eq(0).val(),
-                "fieldoption":[$(".fieldoption :selected").eq(0).text(),$(".fieldoption :selected").eq(1).text()],
-                "operatoroption":[$(".operatoroption :selected").eq(0).val(),$(".operatoroption :selected").eq(1).val()],
-                "valuetxt":[$(".valuetxt").eq(0).val(),$(".valuetxt").eq(1).val()],
+                "andor":[$(".highlight_andor_1 :selected").val(), $(".highlight_andor_2 :selected").val()],
+                "fieldoption":[$(".fieldoption :selected").eq(0).text(),$(".fieldoption :selected").eq(1).text(),$(".fieldoption :selected").eq(2).text()],
+                "operatoroption":[$(".operatoroption :selected").eq(0).val(),$(".operatoroption :selected").eq(1).val(),$(".operatoroption :selected").eq(2).val()],
+                "valuetxt":[$(".valuetxt").eq(0).val(),$(".valuetxt").eq(1).val(),$(".valuetxt").eq(2).val()],
             };
 
             conditionarray.push(tmparr);
+            console.log(conditionarray);
             var htmlvalue="";
             for (var i=0 ;i<conditionarray.length;i++){
                 htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+conditionarray[i]["backcolor"]+";color: "+conditionarray[i]["textcolor"]+";border-color: "+conditionarray[i]["bordercolor"]+"'>"+(i+1).toString()+"</div>";
@@ -1204,18 +1334,25 @@
                         htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
                     else
                         htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
-                if(conditionarray[i]["andor"]!=""){
-                    htmlvalue+="&nbsp;"+conditionarray[i]["andor"];
+                if(conditionarray[i]["andor"][0]!="0"){
+                    htmlvalue+="&nbsp;"+conditionarray[i]["andor"][0];
                     htmlvalue+="&nbsp;"+conditionarray[i]["fieldoption"][1];
-                        if(conditionarray[i]["fieldoption"][0]=="Text Content")
+                        if(conditionarray[i]["fieldoption"][1]=="Text Content")
                             htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
                         else
                             htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
                 }
+                if(conditionarray[i]["andor"][1]!="0"){
+                    htmlvalue+="&nbsp;"+conditionarray[i]["andor"][1];
+                    htmlvalue+="&nbsp;"+conditionarray[i]["fieldoption"][2];
+                        if(conditionarray[i]["fieldoption"][2]=="Text Content")
+                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][2])]+conditionarray[i]["valuetxt"][2]+"&nbsp;";
+                        else
+                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][2])]+conditionarray[i]["valuetxt"][2]+"&nbsp;";
+                }
                 htmlvalue+="<input type='button' class='delitem' value='Delete' onClick='del_func("+i.toString()+")'></p>";
             }
             
-
             if(conditionarray.length > 1){
                 condition_flag = false;
                 for (var i=0 ;i<conditionarray.length;i++){
@@ -1268,11 +1405,11 @@
             var key_and_token = "key=" + api_key + "&token=" + api_token;
             var board_id = $(".b_sharp").find(':selected').text();
 
-            var andor_option = $(".andor").val();
+            var andor_option = [$(".highlight_andor_1").val(), $(".highlight_andor_2").val()];
             var backcolor = $(".backcolor").val();
             var textcolor = $(".textcolor").val();
             var bordercolor = $(".bordercolor").val();
-            var fieldoption = [$(".fieldoption").eq(0).val(), $(".fieldoption").eq(1).val()];
+            var fieldoption = [$(".fieldoption").eq(0).val(), $(".fieldoption").eq(1).val(), $(".fieldoption").eq(2).val()];
 
             switch ($(".fieldoption").eq(0).val()) { 
                 case 'Due Date': 
@@ -1284,7 +1421,8 @@
                     break;
                 case 'Last Person Connected': 
                 case 'Assignee': 
-                    var value1 = $(".list_name_div").eq(0).hide();
+                    // var value1 = $(".list_name_div").eq(0).hide();
+                    var value1 = "";
                     break;
                 case 'Text Content': 
                     var value1 = $(".valuetxt").eq(0).val();
@@ -1316,7 +1454,28 @@
                 default:
                     var value2 = "";
             }
-            var valuetxt = [value1, value2];
+            switch ($(".fieldoption").eq(2).val()) { 
+                case 'Due Date': 
+                case 'Last Time': 
+                    var value3 = $("#datepicker3").val();
+                    break;
+                case 'Label': 
+                    var value3 = $(".label").eq(2).val();
+                    break;
+                case 'Last Person Connected': 
+                case 'Assignee': 
+                    var value3 = "";
+                    break;
+                case 'Text Content': 
+                    var value3 = $(".valuetxt").eq(2).val();
+                    break;
+                case 'List Name': 
+                    var value3 = $(".list-name").eq(2).val();
+                    break;
+                default:
+                    var value3 = "";
+            }
+            var valuetxt = [value1, value2, value3];
             if(conditionarray.length != 0){
                 var andor_option = conditionarray[0]["andor"];
                 var backcolor = conditionarray[0]["backcolor"];
@@ -1324,6 +1483,7 @@
                 var bordercolor = conditionarray[0]["bordercolor"];
                 var fieldoption = conditionarray[0]["fieldoption"];
                 var valuetxt = conditionarray[0]["valuetxt"];
+                var operatoroption = conditionarray[0]["operatoroption"];
             }
             
             var session_data = [];
@@ -1337,6 +1497,7 @@
                 session_data.push(bordercolor);
                 session_data.push(fieldoption);
                 session_data.push(valuetxt);
+                session_data.push(operatoroption);
             }
             $.ajax({
                 url: 'https://datahighlighter.com/api/saveSession/' + session_data, 

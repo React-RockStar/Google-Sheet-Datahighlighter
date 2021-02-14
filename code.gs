@@ -436,7 +436,6 @@ function sync_main(searchtxt,conditionarray_1, b_id, key_and_token) {
 
 function pull(searchtxt, key_and_token) {
   
-    searchtxt="test2";
     var arr=searchtxt.split(",");
     var ss = SpreadsheetApp.getActiveSheet();
     // ss.getRange(1,1).setValue(searchtxt);
@@ -732,17 +731,12 @@ function condition(lab, val,ind, con, x, y) {
         //ss.getRange(1,1).setValue(val);
         
             if (arr.fieldoption[0] == lab) {
-            // ss.getRange(1,1).setValue(x.toString()+y.toString());
-            
+
                 var flag = false;
                 if (arr.operatoroption[0] == "0") {
-                    
                     if (val[ind] == arr.valuetxt[0]) {
-                        flag = true;
-                    
+                        flag = true;                    
                     }
-                
-                
                 }
                 if (arr.operatoroption[0] == "1") {
                     if (val[ind] > arr.valuetxt[0]) {
@@ -772,8 +766,6 @@ function condition(lab, val,ind, con, x, y) {
                 }
 
                 if (flag) {
-                
-                ///////////////////////////////
                     var val1,ind1;
                     
                     if(arr.fieldoption[1]=="Due Date")
@@ -794,7 +786,7 @@ function condition(lab, val,ind, con, x, y) {
                     // ss.getRange(1,1).setValue(x.toString()+y.toString()+flag+arr.andor+val[2]);
                     ////////////////////////
                     // ss.getRange(1,1).setValue(arr.valuetxt[1]);
-                    if (arr.andor == "And") {
+                    if (arr.andor[0] == "And") {
                         flag = false;
                     
                         if (arr.operatoroption[1] == "0") {
@@ -830,8 +822,9 @@ function condition(lab, val,ind, con, x, y) {
                             }
                         }
                     }
-                } else {
-                    if (arr.andor == "Or") {
+                } 
+                else {
+                    if (arr.andor[0] == "Or") {
                                     ///////////////////////////////
                         var val1,ind1;
                         
@@ -886,7 +879,126 @@ function condition(lab, val,ind, con, x, y) {
                     //ss.getRange(1,1).setValue(x.toString()+y.toString()+flag+arr.andor+arr.valuetxt[1]+val1);
                     }
                 }
-            
+
+
+                if (flag) {
+                    var val2,ind2;
+                    
+                    if(arr.fieldoption[2]=="Due Date")
+                        ind2=0;
+                    if(arr.fieldoption[2]=="Label")
+                        ind2=1;
+                    if(arr.fieldoption[2]=="Last Person Connected")
+                        ind2=3;
+                    if(arr.fieldoption[2]=="Assignee")
+                        ind2=5;
+                    if(arr.fieldoption[2]=="Text Content")
+                        ind2=4;
+                    if(arr.fieldoption[2]=="Last Time")
+                        ind2=2;
+                    if(arr.fieldoption[2]=="List Name")
+                        ind2=6;
+                    val2=val[ind2];
+                    // ss.getRange(1,1).setValue(x.toString()+y.toString()+flag+arr.andor+val[2]);
+                    ////////////////////////
+                    // ss.getRange(1,1).setValue(arr.valuetxt[1]);
+                    if (arr.andor[1] == "And") {
+                        flag = false;
+                    
+                        if (arr.operatoroption[2] == "0") {
+                            if (val2 == arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "1") {
+                            if (val2 > con.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "2") {
+                            if (val2 < arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "3") {
+                            if (val2 >= con.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "4") {
+                            if (val2 <= arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        } 
+                        if(arr.fieldoption[2]!="Due Date"){//  && arr.operatoroption[2] !="0"
+                            // ss.getRange(1,1).setValue(val2);
+                            if(val2.search(arr.valuetxt[2])>-1){
+                                flag=true;
+                                //     ss.getRange(1,1).setValue(x.toString()+y.toString());
+                            }
+                        }
+                    }
+                } 
+                else {
+                    if (arr.andor[1] == "Or") {
+                                    ///////////////////////////////
+                        var val2,ind2;
+                        
+                        if(arr.fieldoption[2]=="Due Date")
+                            ind2=0;
+                        if(arr.fieldoption[2]=="Label")
+                            ind2=1;
+                        if(arr.fieldoption[2]=="Last Person Connected")
+                            ind2=3;
+                        if(arr.fieldoption[2]=="Assignee")
+                            ind2=5;
+                        if(arr.fieldoption[2]=="Text Content")
+                            ind2=4;
+                        if(arr.fieldoption[2]=="Last Time")
+                            ind2=2;
+                        if(arr.fieldoption[2]=="List Name")
+                            ind2=6;
+                        val2=val[ind2];// 
+                    
+                        ////////////////////////
+                    
+                        if (arr.operatoroption[2] == "0") {
+                            if (val2 == arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "1") {
+                            if (val2 > arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "2") {
+                            if (val2 < arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "3") {
+                            if (val2 >= arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if (arr.operatoroption[2] == "4") {
+                            if (val2 <= arr.valuetxt[2]) {
+                                flag = true;
+                            }
+                        }
+                        if(arr.fieldoption[2]!="Due Date"  && arr.operatoroption[2] !="0"){
+                            if(val2.search(arr.valuetxt[2])>-1){
+                            flag=true;
+                            }
+                        }
+                    //ss.getRange(1,1).setValue(x.toString()+y.toString()+flag+arr.andor+arr.valuetxt[1]+val1);
+                    }
+                }
+
+
+
+
                 if(flag){
                     var backcolor,bordercolor,textcolor;
                     backcolor=arr.backcolor;
