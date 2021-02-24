@@ -59,6 +59,10 @@
             .highlight_andor_2{
                 margin: 10px 0;
             }
+            .label_div,
+            .label_div_1{
+                display: none;
+            }
         </style>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
@@ -608,8 +612,11 @@
     <body bgcolor="#E6E6FA">
         <div id="container">
             <h2>Data Highlighter for Trello</h2>
-            <label for="uname" id="un">License Key:</label>
-            <input type="text" name="user" placeholder="Enter Key" id="license_key" ><br/><br/>
+            <div id="license_key_section">
+                <label for="uname" id="un">License Key:</label>
+                <input type="text" name="user" placeholder="Enter Key" id="license_key" >
+            </div>
+            <br/><br/>
             <!--label for="upass" id="ps">Password:</label>
             <input type="password" name="pass" placeholder="Enter Password" id="upass"><br/><br/-->
             <button type="submit" value="Enter Key"  id="submit" onClick="enterkey()" style="width: fit-content;margin-bottom:10px;">Enter Key Here</button><br/>
@@ -751,8 +758,8 @@
             </div>
             <select class="highlight_andor_1">
             <option value="0"></option>
-            <option value="And">And</option>
-            <option value="Or">Or</option>
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
             </select>
             <div class="highlight_andordis_1" style="display: none;">
             <select class="fieldoption">
@@ -782,8 +789,8 @@
             </div>
             <select class="highlight_andor_2" style="display: none;">
                 <option value="0"></option>
-                <option value="And">And</option>
-                <option value="Or">Or</option>
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
             </select>
             <div class="highlight_andordis_2" style="display: none;">
                 <select class="fieldoption">
@@ -882,9 +889,11 @@
             $("#activate_highlight").attr("disabled", "true");
         
             function enterkey() {
-
+                
+                $("#license_key_section").hide();
+                connectTrello();
                 var license_key = $("#license_key").val();
-
+                
                 if (license_key) {
                 
                     $.ajax({
@@ -1261,6 +1270,10 @@
         });
 
         $(".backcolor").change(function(){
+            if($('.backcolor').val() == "azure"){
+                $('.colordis').css('background-color', "#007fff");    
+                return;   
+            }
             $('.colordis').css('background-color', $('.backcolor').val());
         });
 
@@ -1272,10 +1285,18 @@
         });
 
         $(".textcolor").change(function(){
+            if($('.textcolor').val() == "azure"){
+                $('.colordis').css('color', "#007fff");    
+                return;
+            }
             $('.colordis').css('color', $('.textcolor').val());
         });
 
         $(".bordercolor").change(function(){
+            if($('.bordercolor').val() == "azure"){
+                $('.colordis').css('border-color', "#007fff");    
+                return;
+            }
             $('.colordis').css('border-color', $('.bordercolor').val());
         });
 
@@ -1328,8 +1349,21 @@
             console.log(conditionarray);
             var htmlvalue="";
             for (var i=0 ;i<conditionarray.length;i++){
-                htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+conditionarray[i]["backcolor"]+";color: "+conditionarray[i]["textcolor"]+";border-color: "+conditionarray[i]["bordercolor"]+"'>"+(i+1).toString()+"</div>";
-                htmlvalue+=conditionarray[i]["fieldoption"][0];
+                var demo_backcolor = conditionarray[i]["backcolor"];
+                var demo_textcolor = conditionarray[i]["textcolor"];
+                var demo_bordercolor = conditionarray[i]["bordercolor"];
+                if(conditionarray[i]["backcolor"] == "azure"){
+                    var demo_backcolor = "#007fff";
+                }
+                if(conditionarray[i]["textcolor"] == "azure"){
+                    var demo_textcolor = "#007fff";
+                }
+                if(conditionarray[i]["bordercolor"] == "azure"){
+                    var demo_bordercolor = "#007fff";
+                }
+
+                htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+demo_backcolor+";color: "+demo_textcolor+";border-color: "+demo_bordercolor+"'>"+(i+1).toString()+"</div>";
+                htmlvalue+="("+conditionarray[i]["fieldoption"][0];
                     if(conditionarray[i]["fieldoption"][0]=="Text Content")
                         htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
                     else
@@ -1338,9 +1372,9 @@
                     htmlvalue+="&nbsp;"+conditionarray[i]["andor"][0];
                     htmlvalue+="&nbsp;"+conditionarray[i]["fieldoption"][1];
                         if(conditionarray[i]["fieldoption"][1]=="Text Content")
-                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+")&nbsp;";
                         else
-                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+")&nbsp;";
                 }
                 if(conditionarray[i]["andor"][1]!="0"){
                     htmlvalue+="&nbsp;"+conditionarray[i]["andor"][1];

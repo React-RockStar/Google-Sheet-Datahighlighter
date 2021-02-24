@@ -59,6 +59,10 @@
             .highlight_andor_2{
                 margin: 10px 0;
             }
+            .label_div,
+            .label_div_1{
+                display: none;
+            }
         </style>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
@@ -378,12 +382,14 @@
     <body bgcolor="#E6E6FA">
         <div id="container">
             <h2>Data Highlighter for Trello</h2>
-            <label for="uname" id="un">License Key:</label>
-            <input type="text" name="user" placeholder="Enter Key" id="license_key" ><br/><br/>
+            <div id="license_key_section">
+                <label for="uname" id="un">License Key:</label>
+                <input type="text" name="user" placeholder="Enter Key" id="license_key" >
+            </div>
+            <br/><br/>
             <!--label for="upass" id="ps">Password:</label>
             <input type="password" name="pass" placeholder="Enter Password" id="upass"><br/><br/-->
             <button type="submit" value="Enter Key"  id="submit" onClick="enterkey()" style="width: fit-content;margin-bottom:10px;">Enter Key Here</button><br/>
-            <button id="connectLink" onClick="connectTrello()" style="width: fit-content">Allow Trello</button><br/>
             <!--button type="submit" value="Register"  id="submit" onClick="alert('Login Successfully')">Register</button-->
             <br/><br/>
             <label>Connection</label>
@@ -447,8 +453,8 @@
                     </div>
                     <select class="filter_andor_1">
                         <option value="0"></option>
-                        <option value="1">And</option>
-                        <option value="2">Or</option>
+                        <option value="1">AND</option>
+                        <option value="2">OR</option>
                     </select>
                     <div class="filter_andordis_1" style="display: none;">
                     <select class="fieldoption_1">
@@ -521,8 +527,8 @@
             </div>
             <select class="highlight_andor_1">
                 <option value="0"></option>
-                <option value="And">And</option>
-                <option value="Or">Or</option>
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
             </select>
             <div class="highlight_andordis_1" style="display: none;">
                 <select class="fieldoption">
@@ -552,8 +558,8 @@
             </div>
             <select class="highlight_andor_2" style="display: none;">
                 <option value="0"></option>
-                <option value="And">And</option>
-                <option value="Or">Or</option>
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
             </select>
             <div class="highlight_andordis_2" style="display: none;">
                 <select class="fieldoption">
@@ -653,6 +659,8 @@
             
                 function enterkey() {
                     
+                    $("#license_key_section").hide();
+                    connectTrello();
                     var license_key = $("#license_key").val();
                     
                     if (license_key) {
@@ -779,6 +787,8 @@
                     };
 
                     conditionarray_1.push(tmparr);
+                    console.log("tmparr" + tmparr);
+                    console.log("conditionarray_1" + conditionarray_1);
                     var htmlvalue="";
                     for (var i=0 ;i<conditionarray_1.length;i++) {
                         htmlvalue+="<p>";
@@ -1081,6 +1091,10 @@
             }
         });
         $(".backcolor").change(function(){
+            if($('.backcolor').val() == "azure"){
+                $('.colordis').css('background-color', "#007fff");    
+                return;   
+            }
             $('.colordis').css('background-color', $('.backcolor').val());
         });
 
@@ -1092,10 +1106,18 @@
         });
 
         $(".textcolor").change(function(){
+            if($('.textcolor').val() == "azure"){
+                $('.colordis').css('color', "#007fff");    
+                return;
+            }
             $('.colordis').css('color', $('.textcolor').val());
         });
 
         $(".bordercolor").change(function(){
+            if($('.bordercolor').val() == "azure"){
+                $('.colordis').css('border-color', "#007fff");    
+                return;
+            }
             $('.colordis').css('border-color', $('.bordercolor').val());
         });
 
@@ -1144,12 +1166,41 @@
                 "valuetxt":[$(".valuetxt").eq(0).val(),$(".valuetxt").eq(1).val(),$(".valuetxt").eq(2).val()],
             };
 
+            
+            if(tmparr["valuetxt"][0] == ""){
+                alert("You used empty value as criteria. Please fill all values correctly.");
+                return;
+            }
+            if(tmparr["andor"][0] != "0"){
+                if(tmparr["valuetxt"][1] == ""){
+                    alert("You used empty value as criteria. Please fill all values correctly.");
+                    return;
+                }
+            }
+            if(tmparr["andor"][1] != "0"){
+                if(tmparr["valuetxt"][2] == ""){
+                    alert("You used empty value as criteria. Please fill all values correctly.");
+                    return;
+                }
+            }
             conditionarray.push(tmparr);
-            console.log(conditionarray);
             var htmlvalue="";
             for (var i=0 ;i<conditionarray.length;i++){
-                htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+conditionarray[i]["backcolor"]+";color: "+conditionarray[i]["textcolor"]+";border-color: "+conditionarray[i]["bordercolor"]+"'>"+(i+1).toString()+"</div>";
-                htmlvalue+=conditionarray[i]["fieldoption"][0];
+                var demo_backcolor = conditionarray[i]["backcolor"];
+                var demo_textcolor = conditionarray[i]["textcolor"];
+                var demo_bordercolor = conditionarray[i]["bordercolor"];
+                if(conditionarray[i]["backcolor"] == "azure"){
+                    var demo_backcolor = "#007fff";
+                }
+                if(conditionarray[i]["textcolor"] == "azure"){
+                    var demo_textcolor = "#007fff";
+                }
+                if(conditionarray[i]["bordercolor"] == "azure"){
+                    var demo_bordercolor = "#007fff";
+                }
+
+                htmlvalue+="<p><div style='width: 20px;height:20px;border-style: solid;background-color: "+demo_backcolor+";color: "+demo_textcolor+";border-color: "+demo_bordercolor+"'>"+(i+1).toString()+"</div>";
+                htmlvalue+="("+conditionarray[i]["fieldoption"][0];
                     if(conditionarray[i]["fieldoption"][0]=="Text Content")
                         htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][0])]+conditionarray[i]["valuetxt"][0];
                     else
@@ -1157,10 +1208,13 @@
                 if(conditionarray[i]["andor"][0]!="0"){
                     htmlvalue+="&nbsp;"+conditionarray[i]["andor"][0];
                     htmlvalue+="&nbsp;"+conditionarray[i]["fieldoption"][1];
-                        if(conditionarray[i]["fieldoption"][1]=="Text Content")
-                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
-                        else
-                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+"&nbsp;";
+                        if(conditionarray[i]["fieldoption"][1]=="Text Content"){
+                            htmlvalue+=operate_lbl_c[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+")&nbsp;";
+                        }
+                        else{
+                            htmlvalue+=operate_lbl[Number(conditionarray[i]["operatoroption"][1])]+conditionarray[i]["valuetxt"][1]+")&nbsp;";
+                        }
+                            
                 }
                 if(conditionarray[i]["andor"][1]!="0"){
                     htmlvalue+="&nbsp;"+conditionarray[i]["andor"][1];
@@ -1215,9 +1269,7 @@
                 }
             }
             $(".conditiontable").html(htmlvalue);
-            
         });
-
 
         function save_session(){
             var license_key = $("#license_key").val();

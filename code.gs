@@ -1004,6 +1004,7 @@ function condition(lab, val,ind, con, x, y) {
                     backcolor=arr.backcolor;
                     bordercolor=arr.bordercolor;
                     textcolor=arr.textcolor;
+                    if(arr.backcolor == "azure") backcolor="#007fff";if(arr.bordercolor=="azure") bordercolor="#007fff";if(arr.textcolor=="azure") textcolor="#007fff";
                     if(backcolor=="black") backcolor="#000000";if(bordercolor=="black") bordercolor="#000000";if(textcolor=="black") textcolor="#000000";
                     if(backcolor=="white") backcolor="#FFFFFF";if(bordercolor=="white") bordercolor="#FFFFFF";if(textcolor=="white") textcolor="#FFFFFF";
                     ss.getRange(x,y).setBackground(backcolor);
